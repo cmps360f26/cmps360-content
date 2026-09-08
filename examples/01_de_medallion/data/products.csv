@@ -1,0 +1,5 @@
+product_id,product_name,category,unit_price
+101,Laptop,electronics,1500.00
+102,Mouse,,25.00
+103,Keyboard,ELECTRONICS,49.99
+104,Desk,Office Furniture,bad_price

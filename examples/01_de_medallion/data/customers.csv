@@ -1,0 +1,5 @@
+customer_id,customer_name,email,country,updated_at
+1,  ali hassan  ,ali@example.com,Qatar,2026-01-01 10:00:00
+2,SARA AHMED,,QA,2026-01-02 11:00:00
+2,Sara Ahmed,sara@example.com,QAT,2026-01-03 12:00:00
+3,Omar Saleh,omar@example.com,qatar,2026-01-04 09:00:00
