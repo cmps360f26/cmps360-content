@@ -1,0 +1,115 @@
+surah_no,surah_name_en,surah_name,revelation_place,total_ayahs
+1,The Opening,الفاتحة,Meccan,7
+2,The Cow,البقرة,Medinan,286
+3,The Family of Imran,آل عمران,Medinan,200
+4,The Women,النساء,Medinan,176
+5,The Table Spread,المائدة,Medinan,120
+6,The Cattle,الأنعام,Meccan,165
+7,The Heights,الأعراف,Meccan,206
+8,The Spoils of War,الأنفال,Medinan,75
+9,The Repentance,التوبة,Medinan,129
+10,Jonah,يونس,Meccan,109
+11,Hud,هود,Meccan,123
+12,Joseph,يوسف,Meccan,111
+13,The Thunder,الرعد,Medinan,43
+14,Abraham,إبراهيم,Meccan,52
+15,The Rocky Tract,الحجر,Meccan,99
+16,The Bee,النحل,Meccan,128
+17,The Night Journey,الإسراء,Meccan,111
+18,The Cave,الكهف,Meccan,110
+19,Mary,مريم,Meccan,98
+20,Ta-Ha,طه,Meccan,135
+21,The Prophets,الأنبياء,Meccan,112
+22,The Pilgrimage,الحج,Medinan,78
+23,The Believers,المؤمنون,Meccan,118
+24,The Light,النور,Medinan,64
+25,The Criterion,الفرقان,Meccan,77
+26,The Poets,الشعراء,Meccan,227
+27,The Ant,النمل,Meccan,93
+28,The Narration,القصص,Meccan,88
+29,The Spider,العنكبوت,Meccan,69
+30,The Romans,الروم,Meccan,60
+31,Luqman,لقمان,Meccan,34
+32,The Prostration,السجدة,Meccan,30
+33,The Combined Forces,الأحزاب,Medinan,73
+34,Sheba,سبأ,Meccan,54
+35,The Originator,فاطر,Meccan,45
+36,Ya-Sin,يس,Meccan,83
+37,Those Ranged in Ranks,الصافات,Meccan,182
+38,Sad,ص,Meccan,88
+39,The Troops,الزمر,Meccan,75
+40,The Forgiver,غافر,Meccan,85
+41,Explained in Detail,فصلت,Meccan,54
+42,The Consultation,الشورى,Meccan,53
+43,The Ornaments of Gold,الزخرف,Meccan,89
+44,The Smoke,الدخان,Meccan,59
+45,The Kneeling,الجاثية,Meccan,37
+46,The Wind-Curved Sandhills,الأحقاف,Meccan,35
+47,Muhammad,محمد,Medinan,38
+48,The Victory,الفتح,Medinan,29
+49,The Rooms,الحجرات,Medinan,18
+50,Qaf,ق,Meccan,45
+51,The Winnowing Winds,الذاريات,Meccan,60
+52,The Mount,الطور,Meccan,49
+53,The Star,النجم,Meccan,62
+54,The Moon,القمر,Meccan,55
+55,The Beneficent,الرحمن,Medinan,78
+56,The Inevitable,الواقعة,Meccan,96
+57,The Iron,الحديد,Medinan,29
+58,The Pleading Woman,المجادلة,Medinan,22
+59,The Exile,الحشر,Medinan,24
+60,She That Is To Be Examined,الممتحنة,Medinan,13
+61,The Ranks,الصف,Medinan,14
+62,Friday,الجمعة,Medinan,11
+63,The Hypocrites,المنافقون,Medinan,11
+64,Mutual Disillusion,التغابن,Medinan,18
+65,Divorce,الطلاق,Medinan,12
+66,The Prohibition,التحريم,Medinan,12
+67,The Sovereignty,الملك,Meccan,30
+68,The Pen,القلم,Meccan,52
+69,The Reality,الحاقة,Meccan,52
+70,The Ascending Stairways,المعارج,Meccan,44
+71,Noah,نوح,Meccan,28
+72,The Jinn,الجن,Meccan,28
+73,The Enshrouded One,المزمل,Meccan,20
+74,The Cloaked One,المدثر,Meccan,56
+75,The Resurrection,القيامة,Meccan,40
+76,The Man,الإنسان,Medinan,31
+77,Those Sent Forth,المرسلات,Meccan,50
+78,The Tidings,النبأ,Meccan,40
+79,Those Who Drag Forth,النازعات,Meccan,46
+80,He Frowned,عبس,Meccan,42
+81,The Overthrowing,التكوير,Meccan,29
+82,The Cleaving,الانفطار,Meccan,19
+83,Defrauding,المطففين,Meccan,36
+84,The Sundering,الانشقاق,Meccan,25
+85,The Mansions of the Stars,البروج,Meccan,22
+86,The Morning Star,الطارق,Meccan,17
+87,The Most High,الأعلى,Meccan,19
+88,The Overwhelming,الغاشية,Meccan,26
+89,The Dawn,الفجر,Meccan,30
+90,The City,البلد,Meccan,20
+91,The Sun,الشمس,Meccan,15
+92,The Night,الليل,Meccan,21
+93,The Morning Hours,الضحى,Meccan,11
+94,The Relief,الشرح,Meccan,8
+95,The Fig,التين,Meccan,8
+96,The Clot,العلق,Meccan,19
+97,The Power,القدر,Meccan,5
+98,The Clear Proof,البينة,Medinan,8
+99,The Earthquake,الزلزلة,Medinan,8
+100,The Courser,العاديات,Meccan,11
+101,The Calamity,القارعة,Meccan,11
+102,Rivalry in World Increase,التكاثر,Meccan,8
+103,The Declining Day,العصر,Meccan,3
+104,The Traducer,الهمزة,Meccan,9
+105,The Elephant,الفيل,Meccan,5
+106,Quraysh,قريش,Meccan,4
+107,Small Kindnesses,الماعون,Meccan,7
+108,The Abundance,الكوثر,Meccan,3
+109,The Disbelievers,الكافرون,Meccan,6
+110,The Divine Support,النصر,Medinan,3
+111,The Palm Fiber,المسد,Meccan,5
+112,The Sincerity,الإخلاص,Meccan,4
+113,The Daybreak,الفلق,Meccan,5
+114,Mankind,الناس,Meccan,6

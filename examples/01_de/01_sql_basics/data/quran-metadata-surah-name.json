@@ -1,0 +1,1142 @@
+{
+    "1": {
+        "id": 1,
+        "name": "Al-Fātiĥah",
+        "name_simple": "Al-Fatihah",
+        "name_arabic": "الفاتحة",
+        "revelation_order": 5,
+        "revelation_place": "makkah",
+        "verses_count": 7,
+        "bismillah_pre": false
+    },
+    "2": {
+        "id": 2,
+        "name": "Al-Baqarah",
+        "name_simple": "Al-Baqarah",
+        "name_arabic": "البقرة",
+        "revelation_order": 87,
+        "revelation_place": "madinah",
+        "verses_count": 286,
+        "bismillah_pre": true
+    },
+    "3": {
+        "id": 3,
+        "name": "Āli `Imrān",
+        "name_simple": "Ali 'Imran",
+        "name_arabic": "آل عمران",
+        "revelation_order": 89,
+        "revelation_place": "madinah",
+        "verses_count": 200,
+        "bismillah_pre": true
+    },
+    "4": {
+        "id": 4,
+        "name": "An-Nisā",
+        "name_simple": "An-Nisa",
+        "name_arabic": "النساء",
+        "revelation_order": 92,
+        "revelation_place": "madinah",
+        "verses_count": 176,
+        "bismillah_pre": true
+    },
+    "5": {
+        "id": 5,
+        "name": "Al-Mā'idah",
+        "name_simple": "Al-Ma'idah",
+        "name_arabic": "المائدة",
+        "revelation_order": 112,
+        "revelation_place": "madinah",
+        "verses_count": 120,
+        "bismillah_pre": true
+    },
+    "6": {
+        "id": 6,
+        "name": "Al-'An`ām",
+        "name_simple": "Al-An'am",
+        "name_arabic": "الأنعام",
+        "revelation_order": 55,
+        "revelation_place": "makkah",
+        "verses_count": 165,
+        "bismillah_pre": true
+    },
+    "7": {
+        "id": 7,
+        "name": "Al-'A`rāf",
+        "name_simple": "Al-A'raf",
+        "name_arabic": "الأعراف",
+        "revelation_order": 39,
+        "revelation_place": "makkah",
+        "verses_count": 206,
+        "bismillah_pre": true
+    },
+    "8": {
+        "id": 8,
+        "name": "Al-'Anfāl",
+        "name_simple": "Al-Anfal",
+        "name_arabic": "الأنفال",
+        "revelation_order": 88,
+        "revelation_place": "madinah",
+        "verses_count": 75,
+        "bismillah_pre": true
+    },
+    "9": {
+        "id": 9,
+        "name": "At-Tawbah",
+        "name_simple": "At-Tawbah",
+        "name_arabic": "التوبة",
+        "revelation_order": 113,
+        "revelation_place": "madinah",
+        "verses_count": 129,
+        "bismillah_pre": false
+    },
+    "10": {
+        "id": 10,
+        "name": "Yūnus",
+        "name_simple": "Yunus",
+        "name_arabic": "يونس",
+        "revelation_order": 51,
+        "revelation_place": "makkah",
+        "verses_count": 109,
+        "bismillah_pre": true
+    },
+    "11": {
+        "id": 11,
+        "name": "Hūd",
+        "name_simple": "Hud",
+        "name_arabic": "هود",
+        "revelation_order": 52,
+        "revelation_place": "makkah",
+        "verses_count": 123,
+        "bismillah_pre": true
+    },
+    "12": {
+        "id": 12,
+        "name": "Yūsuf",
+        "name_simple": "Yusuf",
+        "name_arabic": "يوسف",
+        "revelation_order": 53,
+        "revelation_place": "makkah",
+        "verses_count": 111,
+        "bismillah_pre": true
+    },
+    "13": {
+        "id": 13,
+        "name": "Ar-Ra`d",
+        "name_simple": "Ar-Ra'd",
+        "name_arabic": "الرعد",
+        "revelation_order": 96,
+        "revelation_place": "madinah",
+        "verses_count": 43,
+        "bismillah_pre": true
+    },
+    "14": {
+        "id": 14,
+        "name": "Ibrāhīm",
+        "name_simple": "Ibrahim",
+        "name_arabic": "ابراهيم",
+        "revelation_order": 72,
+        "revelation_place": "makkah",
+        "verses_count": 52,
+        "bismillah_pre": true
+    },
+    "15": {
+        "id": 15,
+        "name": "Al-Ĥijr",
+        "name_simple": "Al-Hijr",
+        "name_arabic": "الحجر",
+        "revelation_order": 54,
+        "revelation_place": "makkah",
+        "verses_count": 99,
+        "bismillah_pre": true
+    },
+    "16": {
+        "id": 16,
+        "name": "An-Naĥl",
+        "name_simple": "An-Nahl",
+        "name_arabic": "النحل",
+        "revelation_order": 70,
+        "revelation_place": "makkah",
+        "verses_count": 128,
+        "bismillah_pre": true
+    },
+    "17": {
+        "id": 17,
+        "name": "Al-'Isrā",
+        "name_simple": "Al-Isra",
+        "name_arabic": "الإسراء",
+        "revelation_order": 50,
+        "revelation_place": "makkah",
+        "verses_count": 111,
+        "bismillah_pre": true
+    },
+    "18": {
+        "id": 18,
+        "name": "Al-Kahf",
+        "name_simple": "Al-Kahf",
+        "name_arabic": "الكهف",
+        "revelation_order": 69,
+        "revelation_place": "makkah",
+        "verses_count": 110,
+        "bismillah_pre": true
+    },
+    "19": {
+        "id": 19,
+        "name": "Maryam",
+        "name_simple": "Maryam",
+        "name_arabic": "مريم",
+        "revelation_order": 44,
+        "revelation_place": "makkah",
+        "verses_count": 98,
+        "bismillah_pre": true
+    },
+    "20": {
+        "id": 20,
+        "name": "Ţāhā",
+        "name_simple": "Taha",
+        "name_arabic": "طه",
+        "revelation_order": 45,
+        "revelation_place": "makkah",
+        "verses_count": 135,
+        "bismillah_pre": true
+    },
+    "21": {
+        "id": 21,
+        "name": "Al-'Anbyā",
+        "name_simple": "Al-Anbya",
+        "name_arabic": "الأنبياء",
+        "revelation_order": 73,
+        "revelation_place": "makkah",
+        "verses_count": 112,
+        "bismillah_pre": true
+    },
+    "22": {
+        "id": 22,
+        "name": "Al-Ĥajj",
+        "name_simple": "Al-Hajj",
+        "name_arabic": "الحج",
+        "revelation_order": 103,
+        "revelation_place": "madinah",
+        "verses_count": 78,
+        "bismillah_pre": true
+    },
+    "23": {
+        "id": 23,
+        "name": "Al-Mu'minūn",
+        "name_simple": "Al-Mu'minun",
+        "name_arabic": "المؤمنون",
+        "revelation_order": 74,
+        "revelation_place": "makkah",
+        "verses_count": 118,
+        "bismillah_pre": true
+    },
+    "24": {
+        "id": 24,
+        "name": "An-Nūr",
+        "name_simple": "An-Nur",
+        "name_arabic": "النور",
+        "revelation_order": 102,
+        "revelation_place": "madinah",
+        "verses_count": 64,
+        "bismillah_pre": true
+    },
+    "25": {
+        "id": 25,
+        "name": "Al-Furqān",
+        "name_simple": "Al-Furqan",
+        "name_arabic": "الفرقان",
+        "revelation_order": 42,
+        "revelation_place": "makkah",
+        "verses_count": 77,
+        "bismillah_pre": true
+    },
+    "26": {
+        "id": 26,
+        "name": "Ash-Shu`arā",
+        "name_simple": "Ash-Shu'ara",
+        "name_arabic": "الشعراء",
+        "revelation_order": 47,
+        "revelation_place": "makkah",
+        "verses_count": 227,
+        "bismillah_pre": true
+    },
+    "27": {
+        "id": 27,
+        "name": "An-Naml",
+        "name_simple": "An-Naml",
+        "name_arabic": "النمل",
+        "revelation_order": 48,
+        "revelation_place": "makkah",
+        "verses_count": 93,
+        "bismillah_pre": true
+    },
+    "28": {
+        "id": 28,
+        "name": "Al-Qaşaş",
+        "name_simple": "Al-Qasas",
+        "name_arabic": "القصص",
+        "revelation_order": 49,
+        "revelation_place": "makkah",
+        "verses_count": 88,
+        "bismillah_pre": true
+    },
+    "29": {
+        "id": 29,
+        "name": "Al-`Ankabūt",
+        "name_simple": "Al-'Ankabut",
+        "name_arabic": "العنكبوت",
+        "revelation_order": 85,
+        "revelation_place": "makkah",
+        "verses_count": 69,
+        "bismillah_pre": true
+    },
+    "30": {
+        "id": 30,
+        "name": "Ar-Rūm",
+        "name_simple": "Ar-Rum",
+        "name_arabic": "الروم",
+        "revelation_order": 84,
+        "revelation_place": "makkah",
+        "verses_count": 60,
+        "bismillah_pre": true
+    },
+    "31": {
+        "id": 31,
+        "name": "Luqmān",
+        "name_simple": "Luqman",
+        "name_arabic": "لقمان",
+        "revelation_order": 57,
+        "revelation_place": "makkah",
+        "verses_count": 34,
+        "bismillah_pre": true
+    },
+    "32": {
+        "id": 32,
+        "name": "As-Sajdah",
+        "name_simple": "As-Sajdah",
+        "name_arabic": "السجدة",
+        "revelation_order": 75,
+        "revelation_place": "makkah",
+        "verses_count": 30,
+        "bismillah_pre": true
+    },
+    "33": {
+        "id": 33,
+        "name": "Al-'Aĥzāb",
+        "name_simple": "Al-Ahzab",
+        "name_arabic": "الأحزاب",
+        "revelation_order": 90,
+        "revelation_place": "madinah",
+        "verses_count": 73,
+        "bismillah_pre": true
+    },
+    "34": {
+        "id": 34,
+        "name": "Saba",
+        "name_simple": "Saba",
+        "name_arabic": "سبإ",
+        "revelation_order": 58,
+        "revelation_place": "makkah",
+        "verses_count": 54,
+        "bismillah_pre": true
+    },
+    "35": {
+        "id": 35,
+        "name": "Fāţir",
+        "name_simple": "Fatir",
+        "name_arabic": "فاطر",
+        "revelation_order": 43,
+        "revelation_place": "makkah",
+        "verses_count": 45,
+        "bismillah_pre": true
+    },
+    "36": {
+        "id": 36,
+        "name": "Yā-Sīn",
+        "name_simple": "Ya-Sin",
+        "name_arabic": "يس",
+        "revelation_order": 41,
+        "revelation_place": "makkah",
+        "verses_count": 83,
+        "bismillah_pre": true
+    },
+    "37": {
+        "id": 37,
+        "name": "Aş-Şāffāt",
+        "name_simple": "As-Saffat",
+        "name_arabic": "الصافات",
+        "revelation_order": 56,
+        "revelation_place": "makkah",
+        "verses_count": 182,
+        "bismillah_pre": true
+    },
+    "38": {
+        "id": 38,
+        "name": "Şād",
+        "name_simple": "Sad",
+        "name_arabic": "ص",
+        "revelation_order": 38,
+        "revelation_place": "makkah",
+        "verses_count": 88,
+        "bismillah_pre": true
+    },
+    "39": {
+        "id": 39,
+        "name": "Az-Zumar",
+        "name_simple": "Az-Zumar",
+        "name_arabic": "الزمر",
+        "revelation_order": 59,
+        "revelation_place": "makkah",
+        "verses_count": 75,
+        "bismillah_pre": true
+    },
+    "40": {
+        "id": 40,
+        "name": "Ghāfir",
+        "name_simple": "Ghafir",
+        "name_arabic": "غافر",
+        "revelation_order": 60,
+        "revelation_place": "makkah",
+        "verses_count": 85,
+        "bismillah_pre": true
+    },
+    "41": {
+        "id": 41,
+        "name": "Fuşşilat",
+        "name_simple": "Fussilat",
+        "name_arabic": "فصلت",
+        "revelation_order": 61,
+        "revelation_place": "makkah",
+        "verses_count": 54,
+        "bismillah_pre": true
+    },
+    "42": {
+        "id": 42,
+        "name": "Ash-Shūraá",
+        "name_simple": "Ash-Shuraa",
+        "name_arabic": "الشورى",
+        "revelation_order": 62,
+        "revelation_place": "makkah",
+        "verses_count": 53,
+        "bismillah_pre": true
+    },
+    "43": {
+        "id": 43,
+        "name": "Az-Zukhruf",
+        "name_simple": "Az-Zukhruf",
+        "name_arabic": "الزخرف",
+        "revelation_order": 63,
+        "revelation_place": "makkah",
+        "verses_count": 89,
+        "bismillah_pre": true
+    },
+    "44": {
+        "id": 44,
+        "name": "Ad-Dukhān",
+        "name_simple": "Ad-Dukhan",
+        "name_arabic": "الدخان",
+        "revelation_order": 64,
+        "revelation_place": "makkah",
+        "verses_count": 59,
+        "bismillah_pre": true
+    },
+    "45": {
+        "id": 45,
+        "name": "Al-Jāthiyah",
+        "name_simple": "Al-Jathiyah",
+        "name_arabic": "الجاثية",
+        "revelation_order": 65,
+        "revelation_place": "makkah",
+        "verses_count": 37,
+        "bismillah_pre": true
+    },
+    "46": {
+        "id": 46,
+        "name": "Al-'Aĥqāf",
+        "name_simple": "Al-Ahqaf",
+        "name_arabic": "الأحقاف",
+        "revelation_order": 66,
+        "revelation_place": "makkah",
+        "verses_count": 35,
+        "bismillah_pre": true
+    },
+    "47": {
+        "id": 47,
+        "name": "Muĥammad",
+        "name_simple": "Muhammad",
+        "name_arabic": "محمد",
+        "revelation_order": 95,
+        "revelation_place": "madinah",
+        "verses_count": 38,
+        "bismillah_pre": true
+    },
+    "48": {
+        "id": 48,
+        "name": "Al-Fatĥ",
+        "name_simple": "Al-Fath",
+        "name_arabic": "الفتح",
+        "revelation_order": 111,
+        "revelation_place": "madinah",
+        "verses_count": 29,
+        "bismillah_pre": true
+    },
+    "49": {
+        "id": 49,
+        "name": "Al-Ĥujurāt",
+        "name_simple": "Al-Hujurat",
+        "name_arabic": "الحجرات",
+        "revelation_order": 106,
+        "revelation_place": "madinah",
+        "verses_count": 18,
+        "bismillah_pre": true
+    },
+    "50": {
+        "id": 50,
+        "name": "Qāf",
+        "name_simple": "Qaf",
+        "name_arabic": "ق",
+        "revelation_order": 34,
+        "revelation_place": "makkah",
+        "verses_count": 45,
+        "bismillah_pre": true
+    },
+    "51": {
+        "id": 51,
+        "name": "Adh-Dhāriyāt",
+        "name_simple": "Adh-Dhariyat",
+        "name_arabic": "الذاريات",
+        "revelation_order": 67,
+        "revelation_place": "makkah",
+        "verses_count": 60,
+        "bismillah_pre": true
+    },
+    "52": {
+        "id": 52,
+        "name": "Aţ-Ţūr",
+        "name_simple": "At-Tur",
+        "name_arabic": "الطور",
+        "revelation_order": 76,
+        "revelation_place": "makkah",
+        "verses_count": 49,
+        "bismillah_pre": true
+    },
+    "53": {
+        "id": 53,
+        "name": "An-Najm",
+        "name_simple": "An-Najm",
+        "name_arabic": "النجم",
+        "revelation_order": 23,
+        "revelation_place": "makkah",
+        "verses_count": 62,
+        "bismillah_pre": true
+    },
+    "54": {
+        "id": 54,
+        "name": "Al-Qamar",
+        "name_simple": "Al-Qamar",
+        "name_arabic": "القمر",
+        "revelation_order": 37,
+        "revelation_place": "makkah",
+        "verses_count": 55,
+        "bismillah_pre": true
+    },
+    "55": {
+        "id": 55,
+        "name": "Ar-Raĥmān",
+        "name_simple": "Ar-Rahman",
+        "name_arabic": "الرحمن",
+        "revelation_order": 97,
+        "revelation_place": "madinah",
+        "verses_count": 78,
+        "bismillah_pre": true
+    },
+    "56": {
+        "id": 56,
+        "name": "Al-Wāqi`ah",
+        "name_simple": "Al-Waqi'ah",
+        "name_arabic": "الواقعة",
+        "revelation_order": 46,
+        "revelation_place": "makkah",
+        "verses_count": 96,
+        "bismillah_pre": true
+    },
+    "57": {
+        "id": 57,
+        "name": "Al-Ĥadīd",
+        "name_simple": "Al-Hadid",
+        "name_arabic": "الحديد",
+        "revelation_order": 94,
+        "revelation_place": "madinah",
+        "verses_count": 29,
+        "bismillah_pre": true
+    },
+    "58": {
+        "id": 58,
+        "name": "Al-Mujādila",
+        "name_simple": "Al-Mujadila",
+        "name_arabic": "المجادلة",
+        "revelation_order": 105,
+        "revelation_place": "madinah",
+        "verses_count": 22,
+        "bismillah_pre": true
+    },
+    "59": {
+        "id": 59,
+        "name": "Al-Ĥashr",
+        "name_simple": "Al-Hashr",
+        "name_arabic": "الحشر",
+        "revelation_order": 101,
+        "revelation_place": "madinah",
+        "verses_count": 24,
+        "bismillah_pre": true
+    },
+    "60": {
+        "id": 60,
+        "name": "Al-Mumtaĥanah",
+        "name_simple": "Al-Mumtahanah",
+        "name_arabic": "الممتحنة",
+        "revelation_order": 91,
+        "revelation_place": "madinah",
+        "verses_count": 13,
+        "bismillah_pre": true
+    },
+    "61": {
+        "id": 61,
+        "name": "Aş-Şaf",
+        "name_simple": "As-Saf",
+        "name_arabic": "الصف",
+        "revelation_order": 109,
+        "revelation_place": "madinah",
+        "verses_count": 14,
+        "bismillah_pre": true
+    },
+    "62": {
+        "id": 62,
+        "name": "Al-Jumu`ah",
+        "name_simple": "Al-Jumu'ah",
+        "name_arabic": "الجمعة",
+        "revelation_order": 110,
+        "revelation_place": "madinah",
+        "verses_count": 11,
+        "bismillah_pre": true
+    },
+    "63": {
+        "id": 63,
+        "name": "Al-Munāfiqūn",
+        "name_simple": "Al-Munafiqun",
+        "name_arabic": "المنافقون",
+        "revelation_order": 104,
+        "revelation_place": "madinah",
+        "verses_count": 11,
+        "bismillah_pre": true
+    },
+    "64": {
+        "id": 64,
+        "name": "At-Taghābun",
+        "name_simple": "At-Taghabun",
+        "name_arabic": "التغابن",
+        "revelation_order": 108,
+        "revelation_place": "madinah",
+        "verses_count": 18,
+        "bismillah_pre": true
+    },
+    "65": {
+        "id": 65,
+        "name": "Aţ-Ţalāq",
+        "name_simple": "At-Talaq",
+        "name_arabic": "الطلاق",
+        "revelation_order": 99,
+        "revelation_place": "madinah",
+        "verses_count": 12,
+        "bismillah_pre": true
+    },
+    "66": {
+        "id": 66,
+        "name": "At-Taĥrīm",
+        "name_simple": "At-Tahrim",
+        "name_arabic": "التحريم",
+        "revelation_order": 107,
+        "revelation_place": "madinah",
+        "verses_count": 12,
+        "bismillah_pre": true
+    },
+    "67": {
+        "id": 67,
+        "name": "Al-Mulk",
+        "name_simple": "Al-Mulk",
+        "name_arabic": "الملك",
+        "revelation_order": 77,
+        "revelation_place": "makkah",
+        "verses_count": 30,
+        "bismillah_pre": true
+    },
+    "68": {
+        "id": 68,
+        "name": "Al-Qalam",
+        "name_simple": "Al-Qalam",
+        "name_arabic": "القلم",
+        "revelation_order": 2,
+        "revelation_place": "makkah",
+        "verses_count": 52,
+        "bismillah_pre": true
+    },
+    "69": {
+        "id": 69,
+        "name": "Al-Ĥāqqah",
+        "name_simple": "Al-Haqqah",
+        "name_arabic": "الحاقة",
+        "revelation_order": 78,
+        "revelation_place": "makkah",
+        "verses_count": 52,
+        "bismillah_pre": true
+    },
+    "70": {
+        "id": 70,
+        "name": "Al-Ma`ārij",
+        "name_simple": "Al-Ma'arij",
+        "name_arabic": "المعارج",
+        "revelation_order": 79,
+        "revelation_place": "makkah",
+        "verses_count": 44,
+        "bismillah_pre": true
+    },
+    "71": {
+        "id": 71,
+        "name": "Nūĥ",
+        "name_simple": "Nuh",
+        "name_arabic": "نوح",
+        "revelation_order": 71,
+        "revelation_place": "makkah",
+        "verses_count": 28,
+        "bismillah_pre": true
+    },
+    "72": {
+        "id": 72,
+        "name": "Al-Jinn",
+        "name_simple": "Al-Jinn",
+        "name_arabic": "الجن",
+        "revelation_order": 40,
+        "revelation_place": "makkah",
+        "verses_count": 28,
+        "bismillah_pre": true
+    },
+    "73": {
+        "id": 73,
+        "name": "Al-Muzzammil",
+        "name_simple": "Al-Muzzammil",
+        "name_arabic": "المزمل",
+        "revelation_order": 3,
+        "revelation_place": "makkah",
+        "verses_count": 20,
+        "bismillah_pre": true
+    },
+    "74": {
+        "id": 74,
+        "name": "Al-Muddaththir",
+        "name_simple": "Al-Muddaththir",
+        "name_arabic": "المدثر",
+        "revelation_order": 4,
+        "revelation_place": "makkah",
+        "verses_count": 56,
+        "bismillah_pre": true
+    },
+    "75": {
+        "id": 75,
+        "name": "Al-Qiyāmah",
+        "name_simple": "Al-Qiyamah",
+        "name_arabic": "القيامة",
+        "revelation_order": 31,
+        "revelation_place": "makkah",
+        "verses_count": 40,
+        "bismillah_pre": true
+    },
+    "76": {
+        "id": 76,
+        "name": "Al-'Insān",
+        "name_simple": "Al-Insan",
+        "name_arabic": "الانسان",
+        "revelation_order": 98,
+        "revelation_place": "madinah",
+        "verses_count": 31,
+        "bismillah_pre": true
+    },
+    "77": {
+        "id": 77,
+        "name": "Al-Mursalāt",
+        "name_simple": "Al-Mursalat",
+        "name_arabic": "المرسلات",
+        "revelation_order": 33,
+        "revelation_place": "makkah",
+        "verses_count": 50,
+        "bismillah_pre": true
+    },
+    "78": {
+        "id": 78,
+        "name": "An-Naba",
+        "name_simple": "An-Naba",
+        "name_arabic": "النبإ",
+        "revelation_order": 80,
+        "revelation_place": "makkah",
+        "verses_count": 40,
+        "bismillah_pre": true
+    },
+    "79": {
+        "id": 79,
+        "name": "An-Nāzi`āt",
+        "name_simple": "An-Nazi'at",
+        "name_arabic": "النازعات",
+        "revelation_order": 81,
+        "revelation_place": "makkah",
+        "verses_count": 46,
+        "bismillah_pre": true
+    },
+    "80": {
+        "id": 80,
+        "name": "`Abasa",
+        "name_simple": "'Abasa",
+        "name_arabic": "عبس",
+        "revelation_order": 24,
+        "revelation_place": "makkah",
+        "verses_count": 42,
+        "bismillah_pre": true
+    },
+    "81": {
+        "id": 81,
+        "name": "At-Takwīr",
+        "name_simple": "At-Takwir",
+        "name_arabic": "التكوير",
+        "revelation_order": 7,
+        "revelation_place": "makkah",
+        "verses_count": 29,
+        "bismillah_pre": true
+    },
+    "82": {
+        "id": 82,
+        "name": "Al-'Infiţār",
+        "name_simple": "Al-Infitar",
+        "name_arabic": "الإنفطار",
+        "revelation_order": 82,
+        "revelation_place": "makkah",
+        "verses_count": 19,
+        "bismillah_pre": true
+    },
+    "83": {
+        "id": 83,
+        "name": "Al-Muţaffifīn",
+        "name_simple": "Al-Mutaffifin",
+        "name_arabic": "المطففين",
+        "revelation_order": 86,
+        "revelation_place": "makkah",
+        "verses_count": 36,
+        "bismillah_pre": true
+    },
+    "84": {
+        "id": 84,
+        "name": "Al-'Inshiqāq",
+        "name_simple": "Al-Inshiqaq",
+        "name_arabic": "الإنشقاق",
+        "revelation_order": 83,
+        "revelation_place": "makkah",
+        "verses_count": 25,
+        "bismillah_pre": true
+    },
+    "85": {
+        "id": 85,
+        "name": "Al-Burūj",
+        "name_simple": "Al-Buruj",
+        "name_arabic": "البروج",
+        "revelation_order": 27,
+        "revelation_place": "makkah",
+        "verses_count": 22,
+        "bismillah_pre": true
+    },
+    "86": {
+        "id": 86,
+        "name": "Aţ-Ţāriq",
+        "name_simple": "At-Tariq",
+        "name_arabic": "الطارق",
+        "revelation_order": 36,
+        "revelation_place": "makkah",
+        "verses_count": 17,
+        "bismillah_pre": true
+    },
+    "87": {
+        "id": 87,
+        "name": "Al-'A`lá",
+        "name_simple": "Al-A'la",
+        "name_arabic": "الأعلى",
+        "revelation_order": 8,
+        "revelation_place": "makkah",
+        "verses_count": 19,
+        "bismillah_pre": true
+    },
+    "88": {
+        "id": 88,
+        "name": "Al-Ghāshiyah",
+        "name_simple": "Al-Ghashiyah",
+        "name_arabic": "الغاشية",
+        "revelation_order": 68,
+        "revelation_place": "makkah",
+        "verses_count": 26,
+        "bismillah_pre": true
+    },
+    "89": {
+        "id": 89,
+        "name": "Al-Fajr",
+        "name_simple": "Al-Fajr",
+        "name_arabic": "الفجر",
+        "revelation_order": 10,
+        "revelation_place": "makkah",
+        "verses_count": 30,
+        "bismillah_pre": true
+    },
+    "90": {
+        "id": 90,
+        "name": "Al-Balad",
+        "name_simple": "Al-Balad",
+        "name_arabic": "البلد",
+        "revelation_order": 35,
+        "revelation_place": "makkah",
+        "verses_count": 20,
+        "bismillah_pre": true
+    },
+    "91": {
+        "id": 91,
+        "name": "Ash-Shams",
+        "name_simple": "Ash-Shams",
+        "name_arabic": "الشمس",
+        "revelation_order": 26,
+        "revelation_place": "makkah",
+        "verses_count": 15,
+        "bismillah_pre": true
+    },
+    "92": {
+        "id": 92,
+        "name": "Al-Layl",
+        "name_simple": "Al-Layl",
+        "name_arabic": "الليل",
+        "revelation_order": 9,
+        "revelation_place": "makkah",
+        "verses_count": 21,
+        "bismillah_pre": true
+    },
+    "93": {
+        "id": 93,
+        "name": "Ađ-Đuĥaá",
+        "name_simple": "Ad-Duhaa",
+        "name_arabic": "الضحى",
+        "revelation_order": 11,
+        "revelation_place": "makkah",
+        "verses_count": 11,
+        "bismillah_pre": true
+    },
+    "94": {
+        "id": 94,
+        "name": "Ash-Sharĥ",
+        "name_simple": "Ash-Sharh",
+        "name_arabic": "الشرح",
+        "revelation_order": 12,
+        "revelation_place": "makkah",
+        "verses_count": 8,
+        "bismillah_pre": true
+    },
+    "95": {
+        "id": 95,
+        "name": "At-Tīn",
+        "name_simple": "At-Tin",
+        "name_arabic": "التين",
+        "revelation_order": 28,
+        "revelation_place": "makkah",
+        "verses_count": 8,
+        "bismillah_pre": true
+    },
+    "96": {
+        "id": 96,
+        "name": "Al-`Alaq",
+        "name_simple": "Al-'Alaq",
+        "name_arabic": "العلق",
+        "revelation_order": 1,
+        "revelation_place": "makkah",
+        "verses_count": 19,
+        "bismillah_pre": true
+    },
+    "97": {
+        "id": 97,
+        "name": "Al-Qadr",
+        "name_simple": "Al-Qadr",
+        "name_arabic": "القدر",
+        "revelation_order": 25,
+        "revelation_place": "makkah",
+        "verses_count": 5,
+        "bismillah_pre": true
+    },
+    "98": {
+        "id": 98,
+        "name": "Al-Bayyinah",
+        "name_simple": "Al-Bayyinah",
+        "name_arabic": "البينة",
+        "revelation_order": 100,
+        "revelation_place": "madinah",
+        "verses_count": 8,
+        "bismillah_pre": true
+    },
+    "99": {
+        "id": 99,
+        "name": "Az-Zalzalah",
+        "name_simple": "Az-Zalzalah",
+        "name_arabic": "الزلزلة",
+        "revelation_order": 93,
+        "revelation_place": "madinah",
+        "verses_count": 8,
+        "bismillah_pre": true
+    },
+    "100": {
+        "id": 100,
+        "name": "Al-`Ādiyāt",
+        "name_simple": "Al-'Adiyat",
+        "name_arabic": "العاديات",
+        "revelation_order": 14,
+        "revelation_place": "makkah",
+        "verses_count": 11,
+        "bismillah_pre": true
+    },
+    "101": {
+        "id": 101,
+        "name": "Al-Qāri`ah",
+        "name_simple": "Al-Qari'ah",
+        "name_arabic": "القارعة",
+        "revelation_order": 30,
+        "revelation_place": "makkah",
+        "verses_count": 11,
+        "bismillah_pre": true
+    },
+    "102": {
+        "id": 102,
+        "name": "At-Takāthur",
+        "name_simple": "At-Takathur",
+        "name_arabic": "التكاثر",
+        "revelation_order": 16,
+        "revelation_place": "makkah",
+        "verses_count": 8,
+        "bismillah_pre": true
+    },
+    "103": {
+        "id": 103,
+        "name": "Al-`Aşr",
+        "name_simple": "Al-'Asr",
+        "name_arabic": "العصر",
+        "revelation_order": 13,
+        "revelation_place": "makkah",
+        "verses_count": 3,
+        "bismillah_pre": true
+    },
+    "104": {
+        "id": 104,
+        "name": "Al-Humazah",
+        "name_simple": "Al-Humazah",
+        "name_arabic": "الهمزة",
+        "revelation_order": 32,
+        "revelation_place": "makkah",
+        "verses_count": 9,
+        "bismillah_pre": true
+    },
+    "105": {
+        "id": 105,
+        "name": "Al-Fīl",
+        "name_simple": "Al-Fil",
+        "name_arabic": "الفيل",
+        "revelation_order": 19,
+        "revelation_place": "makkah",
+        "verses_count": 5,
+        "bismillah_pre": true
+    },
+    "106": {
+        "id": 106,
+        "name": "Quraysh",
+        "name_simple": "Quraysh",
+        "name_arabic": "قريش",
+        "revelation_order": 29,
+        "revelation_place": "makkah",
+        "verses_count": 4,
+        "bismillah_pre": true
+    },
+    "107": {
+        "id": 107,
+        "name": "Al-Mā`ūn",
+        "name_simple": "Al-Ma'un",
+        "name_arabic": "الماعون",
+        "revelation_order": 17,
+        "revelation_place": "makkah",
+        "verses_count": 7,
+        "bismillah_pre": true
+    },
+    "108": {
+        "id": 108,
+        "name": "Al-Kawthar",
+        "name_simple": "Al-Kawthar",
+        "name_arabic": "الكوثر",
+        "revelation_order": 15,
+        "revelation_place": "makkah",
+        "verses_count": 3,
+        "bismillah_pre": true
+    },
+    "109": {
+        "id": 109,
+        "name": "Al-Kāfirūn",
+        "name_simple": "Al-Kafirun",
+        "name_arabic": "الكافرون",
+        "revelation_order": 18,
+        "revelation_place": "makkah",
+        "verses_count": 6,
+        "bismillah_pre": true
+    },
+    "110": {
+        "id": 110,
+        "name": "An-Naşr",
+        "name_simple": "An-Nasr",
+        "name_arabic": "النصر",
+        "revelation_order": 114,
+        "revelation_place": "madinah",
+        "verses_count": 3,
+        "bismillah_pre": true
+    },
+    "111": {
+        "id": 111,
+        "name": "Al-Masad",
+        "name_simple": "Al-Masad",
+        "name_arabic": "المسد",
+        "revelation_order": 6,
+        "revelation_place": "makkah",
+        "verses_count": 5,
+        "bismillah_pre": true
+    },
+    "112": {
+        "id": 112,
+        "name": "Al-'Ikhlāş",
+        "name_simple": "Al-Ikhlas",
+        "name_arabic": "الإخلاص",
+        "revelation_order": 22,
+        "revelation_place": "makkah",
+        "verses_count": 4,
+        "bismillah_pre": true
+    },
+    "113": {
+        "id": 113,
+        "name": "Al-Falaq",
+        "name_simple": "Al-Falaq",
+        "name_arabic": "الفلق",
+        "revelation_order": 20,
+        "revelation_place": "makkah",
+        "verses_count": 5,
+        "bismillah_pre": true
+    },
+    "114": {
+        "id": 114,
+        "name": "An-Nās",
+        "name_simple": "An-Nas",
+        "name_arabic": "الناس",
+        "revelation_order": 21,
+        "revelation_place": "makkah",
+        "verses_count": 6,
+        "bismillah_pre": true
+    }
+}
