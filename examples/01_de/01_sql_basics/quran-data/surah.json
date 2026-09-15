@@ -1,0 +1,1484 @@
+[
+  {
+    "id": 1,
+    "name_arabic": "الفاتحة",
+    "name_english": "Al-Fatihah",
+    "name_transliteration": "Al-Fātiĥah",
+    "verses_count": 7,
+    "revelation_place": "Makkah",
+    "revelation_order": 5,
+    "pages": [
+      1,
+      1
+    ]
+  },
+  {
+    "id": 2,
+    "name_arabic": "البقرة",
+    "name_english": "Al-Baqarah",
+    "name_transliteration": "Al-Baqarah",
+    "verses_count": 286,
+    "revelation_place": "Madinah",
+    "revelation_order": 87,
+    "pages": [
+      2,
+      49
+    ]
+  },
+  {
+    "id": 3,
+    "name_arabic": "آل عمران",
+    "name_english": "Ali 'Imran",
+    "name_transliteration": "Āli `Imrān",
+    "verses_count": 200,
+    "revelation_place": "Madinah",
+    "revelation_order": 89,
+    "pages": [
+      50,
+      76
+    ]
+  },
+  {
+    "id": 4,
+    "name_arabic": "النساء",
+    "name_english": "An-Nisa",
+    "name_transliteration": "An-Nisā",
+    "verses_count": 176,
+    "revelation_place": "Madinah",
+    "revelation_order": 92,
+    "pages": [
+      77,
+      106
+    ]
+  },
+  {
+    "id": 5,
+    "name_arabic": "المائدة",
+    "name_english": "Al-Ma'idah",
+    "name_transliteration": "Al-Mā'idah",
+    "verses_count": 120,
+    "revelation_place": "Madinah",
+    "revelation_order": 112,
+    "pages": [
+      106,
+      127
+    ]
+  },
+  {
+    "id": 6,
+    "name_arabic": "الأنعام",
+    "name_english": "Al-An'am",
+    "name_transliteration": "Al-'An`ām",
+    "verses_count": 165,
+    "revelation_place": "Makkah",
+    "revelation_order": 55,
+    "pages": [
+      128,
+      150
+    ]
+  },
+  {
+    "id": 7,
+    "name_arabic": "الأعراف",
+    "name_english": "Al-A'raf",
+    "name_transliteration": "Al-'A`rāf",
+    "verses_count": 206,
+    "revelation_place": "Makkah",
+    "revelation_order": 39,
+    "pages": [
+      151,
+      176
+    ]
+  },
+  {
+    "id": 8,
+    "name_arabic": "الأنفال",
+    "name_english": "Al-Anfal",
+    "name_transliteration": "Al-'Anfāl",
+    "verses_count": 75,
+    "revelation_place": "Madinah",
+    "revelation_order": 88,
+    "pages": [
+      177,
+      186
+    ]
+  },
+  {
+    "id": 9,
+    "name_arabic": "التوبة",
+    "name_english": "At-Tawbah",
+    "name_transliteration": "At-Tawbah",
+    "verses_count": 129,
+    "revelation_place": "Madinah",
+    "revelation_order": 113,
+    "pages": [
+      187,
+      207
+    ]
+  },
+  {
+    "id": 10,
+    "name_arabic": "يونس",
+    "name_english": "Yunus",
+    "name_transliteration": "Yūnus",
+    "verses_count": 109,
+    "revelation_place": "Makkah",
+    "revelation_order": 51,
+    "pages": [
+      208,
+      221
+    ]
+  },
+  {
+    "id": 11,
+    "name_arabic": "هود",
+    "name_english": "Hud",
+    "name_transliteration": "Hūd",
+    "verses_count": 123,
+    "revelation_place": "Makkah",
+    "revelation_order": 52,
+    "pages": [
+      221,
+      235
+    ]
+  },
+  {
+    "id": 12,
+    "name_arabic": "يوسف",
+    "name_english": "Yusuf",
+    "name_transliteration": "Yūsuf",
+    "verses_count": 111,
+    "revelation_place": "Makkah",
+    "revelation_order": 53,
+    "pages": [
+      235,
+      248
+    ]
+  },
+  {
+    "id": 13,
+    "name_arabic": "الرعد",
+    "name_english": "Ar-Ra'd",
+    "name_transliteration": "Ar-Ra`d",
+    "verses_count": 43,
+    "revelation_place": "Madinah",
+    "revelation_order": 96,
+    "pages": [
+      249,
+      255
+    ]
+  },
+  {
+    "id": 14,
+    "name_arabic": "ابراهيم",
+    "name_english": "Ibrahim",
+    "name_transliteration": "Ibrāhīm",
+    "verses_count": 52,
+    "revelation_place": "Makkah",
+    "revelation_order": 72,
+    "pages": [
+      255,
+      261
+    ]
+  },
+  {
+    "id": 15,
+    "name_arabic": "الحجر",
+    "name_english": "Al-Hijr",
+    "name_transliteration": "Al-Ĥijr",
+    "verses_count": 99,
+    "revelation_place": "Makkah",
+    "revelation_order": 54,
+    "pages": [
+      262,
+      267
+    ]
+  },
+  {
+    "id": 16,
+    "name_arabic": "النحل",
+    "name_english": "An-Nahl",
+    "name_transliteration": "An-Naĥl",
+    "verses_count": 128,
+    "revelation_place": "Makkah",
+    "revelation_order": 70,
+    "pages": [
+      267,
+      281
+    ]
+  },
+  {
+    "id": 17,
+    "name_arabic": "الإسراء",
+    "name_english": "Al-Isra",
+    "name_transliteration": "Al-'Isrā",
+    "verses_count": 111,
+    "revelation_place": "Makkah",
+    "revelation_order": 50,
+    "pages": [
+      282,
+      293
+    ]
+  },
+  {
+    "id": 18,
+    "name_arabic": "الكهف",
+    "name_english": "Al-Kahf",
+    "name_transliteration": "Al-Kahf",
+    "verses_count": 110,
+    "revelation_place": "Makkah",
+    "revelation_order": 69,
+    "pages": [
+      293,
+      304
+    ]
+  },
+  {
+    "id": 19,
+    "name_arabic": "مريم",
+    "name_english": "Maryam",
+    "name_transliteration": "Maryam",
+    "verses_count": 98,
+    "revelation_place": "Makkah",
+    "revelation_order": 44,
+    "pages": [
+      305,
+      312
+    ]
+  },
+  {
+    "id": 20,
+    "name_arabic": "طه",
+    "name_english": "Taha",
+    "name_transliteration": "Ţāhā",
+    "verses_count": 135,
+    "revelation_place": "Makkah",
+    "revelation_order": 45,
+    "pages": [
+      312,
+      321
+    ]
+  },
+  {
+    "id": 21,
+    "name_arabic": "الأنبياء",
+    "name_english": "Al-Anbya",
+    "name_transliteration": "Al-'Anbyā",
+    "verses_count": 112,
+    "revelation_place": "Makkah",
+    "revelation_order": 73,
+    "pages": [
+      322,
+      331
+    ]
+  },
+  {
+    "id": 22,
+    "name_arabic": "الحج",
+    "name_english": "Al-Hajj",
+    "name_transliteration": "Al-Ĥajj",
+    "verses_count": 78,
+    "revelation_place": "Madinah",
+    "revelation_order": 103,
+    "pages": [
+      332,
+      341
+    ]
+  },
+  {
+    "id": 23,
+    "name_arabic": "المؤمنون",
+    "name_english": "Al-Mu'minun",
+    "name_transliteration": "Al-Mu'minūn",
+    "verses_count": 118,
+    "revelation_place": "Makkah",
+    "revelation_order": 74,
+    "pages": [
+      342,
+      349
+    ]
+  },
+  {
+    "id": 24,
+    "name_arabic": "النور",
+    "name_english": "An-Nur",
+    "name_transliteration": "An-Nūr",
+    "verses_count": 64,
+    "revelation_place": "Madinah",
+    "revelation_order": 102,
+    "pages": [
+      350,
+      359
+    ]
+  },
+  {
+    "id": 25,
+    "name_arabic": "الفرقان",
+    "name_english": "Al-Furqan",
+    "name_transliteration": "Al-Furqān",
+    "verses_count": 77,
+    "revelation_place": "Makkah",
+    "revelation_order": 42,
+    "pages": [
+      359,
+      366
+    ]
+  },
+  {
+    "id": 26,
+    "name_arabic": "الشعراء",
+    "name_english": "Ash-Shu'ara",
+    "name_transliteration": "Ash-Shu`arā",
+    "verses_count": 227,
+    "revelation_place": "Makkah",
+    "revelation_order": 47,
+    "pages": [
+      367,
+      376
+    ]
+  },
+  {
+    "id": 27,
+    "name_arabic": "النمل",
+    "name_english": "An-Naml",
+    "name_transliteration": "An-Naml",
+    "verses_count": 93,
+    "revelation_place": "Makkah",
+    "revelation_order": 48,
+    "pages": [
+      377,
+      385
+    ]
+  },
+  {
+    "id": 28,
+    "name_arabic": "القصص",
+    "name_english": "Al-Qasas",
+    "name_transliteration": "Al-Qaşaş",
+    "verses_count": 88,
+    "revelation_place": "Makkah",
+    "revelation_order": 49,
+    "pages": [
+      385,
+      396
+    ]
+  },
+  {
+    "id": 29,
+    "name_arabic": "العنكبوت",
+    "name_english": "Al-'Ankabut",
+    "name_transliteration": "Al-`Ankabūt",
+    "verses_count": 69,
+    "revelation_place": "Makkah",
+    "revelation_order": 85,
+    "pages": [
+      396,
+      404
+    ]
+  },
+  {
+    "id": 30,
+    "name_arabic": "الروم",
+    "name_english": "Ar-Rum",
+    "name_transliteration": "Ar-Rūm",
+    "verses_count": 60,
+    "revelation_place": "Makkah",
+    "revelation_order": 84,
+    "pages": [
+      404,
+      410
+    ]
+  },
+  {
+    "id": 31,
+    "name_arabic": "لقمان",
+    "name_english": "Luqman",
+    "name_transliteration": "Luqmān",
+    "verses_count": 34,
+    "revelation_place": "Makkah",
+    "revelation_order": 57,
+    "pages": [
+      411,
+      414
+    ]
+  },
+  {
+    "id": 32,
+    "name_arabic": "السجدة",
+    "name_english": "As-Sajdah",
+    "name_transliteration": "As-Sajdah",
+    "verses_count": 30,
+    "revelation_place": "Makkah",
+    "revelation_order": 75,
+    "pages": [
+      415,
+      417
+    ]
+  },
+  {
+    "id": 33,
+    "name_arabic": "الأحزاب",
+    "name_english": "Al-Ahzab",
+    "name_transliteration": "Al-'Aĥzāb",
+    "verses_count": 73,
+    "revelation_place": "Madinah",
+    "revelation_order": 90,
+    "pages": [
+      418,
+      427
+    ]
+  },
+  {
+    "id": 34,
+    "name_arabic": "سبإ",
+    "name_english": "Saba",
+    "name_transliteration": "Saba",
+    "verses_count": 54,
+    "revelation_place": "Makkah",
+    "revelation_order": 58,
+    "pages": [
+      428,
+      434
+    ]
+  },
+  {
+    "id": 35,
+    "name_arabic": "فاطر",
+    "name_english": "Fatir",
+    "name_transliteration": "Fāţir",
+    "verses_count": 45,
+    "revelation_place": "Makkah",
+    "revelation_order": 43,
+    "pages": [
+      434,
+      440
+    ]
+  },
+  {
+    "id": 36,
+    "name_arabic": "يس",
+    "name_english": "Ya-Sin",
+    "name_transliteration": "Yā-Sīn",
+    "verses_count": 83,
+    "revelation_place": "Makkah",
+    "revelation_order": 41,
+    "pages": [
+      440,
+      445
+    ]
+  },
+  {
+    "id": 37,
+    "name_arabic": "الصافات",
+    "name_english": "As-Saffat",
+    "name_transliteration": "Aş-Şāffāt",
+    "verses_count": 182,
+    "revelation_place": "Makkah",
+    "revelation_order": 56,
+    "pages": [
+      446,
+      452
+    ]
+  },
+  {
+    "id": 38,
+    "name_arabic": "ص",
+    "name_english": "Sad",
+    "name_transliteration": "Şād",
+    "verses_count": 88,
+    "revelation_place": "Makkah",
+    "revelation_order": 38,
+    "pages": [
+      453,
+      458
+    ]
+  },
+  {
+    "id": 39,
+    "name_arabic": "الزمر",
+    "name_english": "Az-Zumar",
+    "name_transliteration": "Az-Zumar",
+    "verses_count": 75,
+    "revelation_place": "Makkah",
+    "revelation_order": 59,
+    "pages": [
+      458,
+      467
+    ]
+  },
+  {
+    "id": 40,
+    "name_arabic": "غافر",
+    "name_english": "Ghafir",
+    "name_transliteration": "Ghāfir",
+    "verses_count": 85,
+    "revelation_place": "Makkah",
+    "revelation_order": 60,
+    "pages": [
+      467,
+      476
+    ]
+  },
+  {
+    "id": 41,
+    "name_arabic": "فصلت",
+    "name_english": "Fussilat",
+    "name_transliteration": "Fuşşilat",
+    "verses_count": 54,
+    "revelation_place": "Makkah",
+    "revelation_order": 61,
+    "pages": [
+      477,
+      482
+    ]
+  },
+  {
+    "id": 42,
+    "name_arabic": "الشورى",
+    "name_english": "Ash-Shuraa",
+    "name_transliteration": "Ash-Shūraá",
+    "verses_count": 53,
+    "revelation_place": "Makkah",
+    "revelation_order": 62,
+    "pages": [
+      483,
+      489
+    ]
+  },
+  {
+    "id": 43,
+    "name_arabic": "الزخرف",
+    "name_english": "Az-Zukhruf",
+    "name_transliteration": "Az-Zukhruf",
+    "verses_count": 89,
+    "revelation_place": "Makkah",
+    "revelation_order": 63,
+    "pages": [
+      489,
+      495
+    ]
+  },
+  {
+    "id": 44,
+    "name_arabic": "الدخان",
+    "name_english": "Ad-Dukhan",
+    "name_transliteration": "Ad-Dukhān",
+    "verses_count": 59,
+    "revelation_place": "Makkah",
+    "revelation_order": 64,
+    "pages": [
+      496,
+      498
+    ]
+  },
+  {
+    "id": 45,
+    "name_arabic": "الجاثية",
+    "name_english": "Al-Jathiyah",
+    "name_transliteration": "Al-Jāthiyah",
+    "verses_count": 37,
+    "revelation_place": "Makkah",
+    "revelation_order": 65,
+    "pages": [
+      499,
+      502
+    ]
+  },
+  {
+    "id": 46,
+    "name_arabic": "الأحقاف",
+    "name_english": "Al-Ahqaf",
+    "name_transliteration": "Al-'Aĥqāf",
+    "verses_count": 35,
+    "revelation_place": "Makkah",
+    "revelation_order": 66,
+    "pages": [
+      502,
+      506
+    ]
+  },
+  {
+    "id": 47,
+    "name_arabic": "محمد",
+    "name_english": "Muhammad",
+    "name_transliteration": "Muĥammad",
+    "verses_count": 38,
+    "revelation_place": "Madinah",
+    "revelation_order": 95,
+    "pages": [
+      507,
+      510
+    ]
+  },
+  {
+    "id": 48,
+    "name_arabic": "الفتح",
+    "name_english": "Al-Fath",
+    "name_transliteration": "Al-Fatĥ",
+    "verses_count": 29,
+    "revelation_place": "Madinah",
+    "revelation_order": 111,
+    "pages": [
+      511,
+      515
+    ]
+  },
+  {
+    "id": 49,
+    "name_arabic": "الحجرات",
+    "name_english": "Al-Hujurat",
+    "name_transliteration": "Al-Ĥujurāt",
+    "verses_count": 18,
+    "revelation_place": "Madinah",
+    "revelation_order": 106,
+    "pages": [
+      515,
+      517
+    ]
+  },
+  {
+    "id": 50,
+    "name_arabic": "ق",
+    "name_english": "Qaf",
+    "name_transliteration": "Qāf",
+    "verses_count": 45,
+    "revelation_place": "Makkah",
+    "revelation_order": 34,
+    "pages": [
+      518,
+      520
+    ]
+  },
+  {
+    "id": 51,
+    "name_arabic": "الذاريات",
+    "name_english": "Adh-Dhariyat",
+    "name_transliteration": "Adh-Dhāriyāt",
+    "verses_count": 60,
+    "revelation_place": "Makkah",
+    "revelation_order": 67,
+    "pages": [
+      520,
+      523
+    ]
+  },
+  {
+    "id": 52,
+    "name_arabic": "الطور",
+    "name_english": "At-Tur",
+    "name_transliteration": "Aţ-Ţūr",
+    "verses_count": 49,
+    "revelation_place": "Makkah",
+    "revelation_order": 76,
+    "pages": [
+      523,
+      525
+    ]
+  },
+  {
+    "id": 53,
+    "name_arabic": "النجم",
+    "name_english": "An-Najm",
+    "name_transliteration": "An-Najm",
+    "verses_count": 62,
+    "revelation_place": "Makkah",
+    "revelation_order": 23,
+    "pages": [
+      526,
+      528
+    ]
+  },
+  {
+    "id": 54,
+    "name_arabic": "القمر",
+    "name_english": "Al-Qamar",
+    "name_transliteration": "Al-Qamar",
+    "verses_count": 55,
+    "revelation_place": "Makkah",
+    "revelation_order": 37,
+    "pages": [
+      528,
+      531
+    ]
+  },
+  {
+    "id": 55,
+    "name_arabic": "الرحمن",
+    "name_english": "Ar-Rahman",
+    "name_transliteration": "Ar-Raĥmān",
+    "verses_count": 78,
+    "revelation_place": "Madinah",
+    "revelation_order": 97,
+    "pages": [
+      531,
+      534
+    ]
+  },
+  {
+    "id": 56,
+    "name_arabic": "الواقعة",
+    "name_english": "Al-Waqi'ah",
+    "name_transliteration": "Al-Wāqi`ah",
+    "verses_count": 96,
+    "revelation_place": "Makkah",
+    "revelation_order": 46,
+    "pages": [
+      534,
+      537
+    ]
+  },
+  {
+    "id": 57,
+    "name_arabic": "الحديد",
+    "name_english": "Al-Hadid",
+    "name_transliteration": "Al-Ĥadīd",
+    "verses_count": 29,
+    "revelation_place": "Madinah",
+    "revelation_order": 94,
+    "pages": [
+      537,
+      541
+    ]
+  },
+  {
+    "id": 58,
+    "name_arabic": "المجادلة",
+    "name_english": "Al-Mujadila",
+    "name_transliteration": "Al-Mujādila",
+    "verses_count": 22,
+    "revelation_place": "Madinah",
+    "revelation_order": 105,
+    "pages": [
+      542,
+      545
+    ]
+  },
+  {
+    "id": 59,
+    "name_arabic": "الحشر",
+    "name_english": "Al-Hashr",
+    "name_transliteration": "Al-Ĥashr",
+    "verses_count": 24,
+    "revelation_place": "Madinah",
+    "revelation_order": 101,
+    "pages": [
+      545,
+      548
+    ]
+  },
+  {
+    "id": 60,
+    "name_arabic": "الممتحنة",
+    "name_english": "Al-Mumtahanah",
+    "name_transliteration": "Al-Mumtaĥanah",
+    "verses_count": 13,
+    "revelation_place": "Madinah",
+    "revelation_order": 91,
+    "pages": [
+      549,
+      551
+    ]
+  },
+  {
+    "id": 61,
+    "name_arabic": "الصف",
+    "name_english": "As-Saf",
+    "name_transliteration": "Aş-Şaf",
+    "verses_count": 14,
+    "revelation_place": "Madinah",
+    "revelation_order": 109,
+    "pages": [
+      551,
+      552
+    ]
+  },
+  {
+    "id": 62,
+    "name_arabic": "الجمعة",
+    "name_english": "Al-Jumu'ah",
+    "name_transliteration": "Al-Jumu`ah",
+    "verses_count": 11,
+    "revelation_place": "Madinah",
+    "revelation_order": 110,
+    "pages": [
+      553,
+      554
+    ]
+  },
+  {
+    "id": 63,
+    "name_arabic": "المنافقون",
+    "name_english": "Al-Munafiqun",
+    "name_transliteration": "Al-Munāfiqūn",
+    "verses_count": 11,
+    "revelation_place": "Madinah",
+    "revelation_order": 104,
+    "pages": [
+      554,
+      555
+    ]
+  },
+  {
+    "id": 64,
+    "name_arabic": "التغابن",
+    "name_english": "At-Taghabun",
+    "name_transliteration": "At-Taghābun",
+    "verses_count": 18,
+    "revelation_place": "Madinah",
+    "revelation_order": 108,
+    "pages": [
+      556,
+      557
+    ]
+  },
+  {
+    "id": 65,
+    "name_arabic": "الطلاق",
+    "name_english": "At-Talaq",
+    "name_transliteration": "Aţ-Ţalāq",
+    "verses_count": 12,
+    "revelation_place": "Madinah",
+    "revelation_order": 99,
+    "pages": [
+      558,
+      559
+    ]
+  },
+  {
+    "id": 66,
+    "name_arabic": "التحريم",
+    "name_english": "At-Tahrim",
+    "name_transliteration": "At-Taĥrīm",
+    "verses_count": 12,
+    "revelation_place": "Madinah",
+    "revelation_order": 107,
+    "pages": [
+      560,
+      561
+    ]
+  },
+  {
+    "id": 67,
+    "name_arabic": "الملك",
+    "name_english": "Al-Mulk",
+    "name_transliteration": "Al-Mulk",
+    "verses_count": 30,
+    "revelation_place": "Makkah",
+    "revelation_order": 77,
+    "pages": [
+      562,
+      564
+    ]
+  },
+  {
+    "id": 68,
+    "name_arabic": "القلم",
+    "name_english": "Al-Qalam",
+    "name_transliteration": "Al-Qalam",
+    "verses_count": 52,
+    "revelation_place": "Makkah",
+    "revelation_order": 2,
+    "pages": [
+      564,
+      566
+    ]
+  },
+  {
+    "id": 69,
+    "name_arabic": "الحاقة",
+    "name_english": "Al-Haqqah",
+    "name_transliteration": "Al-Ĥāqqah",
+    "verses_count": 52,
+    "revelation_place": "Makkah",
+    "revelation_order": 78,
+    "pages": [
+      566,
+      568
+    ]
+  },
+  {
+    "id": 70,
+    "name_arabic": "المعارج",
+    "name_english": "Al-Ma'arij",
+    "name_transliteration": "Al-Ma`ārij",
+    "verses_count": 44,
+    "revelation_place": "Makkah",
+    "revelation_order": 79,
+    "pages": [
+      568,
+      570
+    ]
+  },
+  {
+    "id": 71,
+    "name_arabic": "نوح",
+    "name_english": "Nuh",
+    "name_transliteration": "Nūĥ",
+    "verses_count": 28,
+    "revelation_place": "Makkah",
+    "revelation_order": 71,
+    "pages": [
+      570,
+      571
+    ]
+  },
+  {
+    "id": 72,
+    "name_arabic": "الجن",
+    "name_english": "Al-Jinn",
+    "name_transliteration": "Al-Jinn",
+    "verses_count": 28,
+    "revelation_place": "Makkah",
+    "revelation_order": 40,
+    "pages": [
+      572,
+      573
+    ]
+  },
+  {
+    "id": 73,
+    "name_arabic": "المزمل",
+    "name_english": "Al-Muzzammil",
+    "name_transliteration": "Al-Muzzammil",
+    "verses_count": 20,
+    "revelation_place": "Makkah",
+    "revelation_order": 3,
+    "pages": [
+      574,
+      575
+    ]
+  },
+  {
+    "id": 74,
+    "name_arabic": "المدثر",
+    "name_english": "Al-Muddaththir",
+    "name_transliteration": "Al-Muddaththir",
+    "verses_count": 56,
+    "revelation_place": "Makkah",
+    "revelation_order": 4,
+    "pages": [
+      575,
+      577
+    ]
+  },
+  {
+    "id": 75,
+    "name_arabic": "القيامة",
+    "name_english": "Al-Qiyamah",
+    "name_transliteration": "Al-Qiyāmah",
+    "verses_count": 40,
+    "revelation_place": "Makkah",
+    "revelation_order": 31,
+    "pages": [
+      577,
+      578
+    ]
+  },
+  {
+    "id": 76,
+    "name_arabic": "الانسان",
+    "name_english": "Al-Insan",
+    "name_transliteration": "Al-'Insān",
+    "verses_count": 31,
+    "revelation_place": "Madinah",
+    "revelation_order": 98,
+    "pages": [
+      578,
+      580
+    ]
+  },
+  {
+    "id": 77,
+    "name_arabic": "المرسلات",
+    "name_english": "Al-Mursalat",
+    "name_transliteration": "Al-Mursalāt",
+    "verses_count": 50,
+    "revelation_place": "Makkah",
+    "revelation_order": 33,
+    "pages": [
+      580,
+      581
+    ]
+  },
+  {
+    "id": 78,
+    "name_arabic": "النبإ",
+    "name_english": "An-Naba",
+    "name_transliteration": "An-Naba",
+    "verses_count": 40,
+    "revelation_place": "Makkah",
+    "revelation_order": 80,
+    "pages": [
+      582,
+      583
+    ]
+  },
+  {
+    "id": 79,
+    "name_arabic": "النازعات",
+    "name_english": "An-Nazi'at",
+    "name_transliteration": "An-Nāzi`āt",
+    "verses_count": 46,
+    "revelation_place": "Makkah",
+    "revelation_order": 81,
+    "pages": [
+      583,
+      584
+    ]
+  },
+  {
+    "id": 80,
+    "name_arabic": "عبس",
+    "name_english": "'Abasa",
+    "name_transliteration": "`Abasa",
+    "verses_count": 42,
+    "revelation_place": "Makkah",
+    "revelation_order": 24,
+    "pages": [
+      585,
+      585
+    ]
+  },
+  {
+    "id": 81,
+    "name_arabic": "التكوير",
+    "name_english": "At-Takwir",
+    "name_transliteration": "At-Takwīr",
+    "verses_count": 29,
+    "revelation_place": "Makkah",
+    "revelation_order": 7,
+    "pages": [
+      586,
+      586
+    ]
+  },
+  {
+    "id": 82,
+    "name_arabic": "الإنفطار",
+    "name_english": "Al-Infitar",
+    "name_transliteration": "Al-'Infiţār",
+    "verses_count": 19,
+    "revelation_place": "Makkah",
+    "revelation_order": 82,
+    "pages": [
+      587,
+      587
+    ]
+  },
+  {
+    "id": 83,
+    "name_arabic": "المطففين",
+    "name_english": "Al-Mutaffifin",
+    "name_transliteration": "Al-Muţaffifīn",
+    "verses_count": 36,
+    "revelation_place": "Makkah",
+    "revelation_order": 86,
+    "pages": [
+      587,
+      589
+    ]
+  },
+  {
+    "id": 84,
+    "name_arabic": "الإنشقاق",
+    "name_english": "Al-Inshiqaq",
+    "name_transliteration": "Al-'Inshiqāq",
+    "verses_count": 25,
+    "revelation_place": "Makkah",
+    "revelation_order": 83,
+    "pages": [
+      589,
+      589
+    ]
+  },
+  {
+    "id": 85,
+    "name_arabic": "البروج",
+    "name_english": "Al-Buruj",
+    "name_transliteration": "Al-Burūj",
+    "verses_count": 22,
+    "revelation_place": "Makkah",
+    "revelation_order": 27,
+    "pages": [
+      590,
+      590
+    ]
+  },
+  {
+    "id": 86,
+    "name_arabic": "الطارق",
+    "name_english": "At-Tariq",
+    "name_transliteration": "Aţ-Ţāriq",
+    "verses_count": 17,
+    "revelation_place": "Makkah",
+    "revelation_order": 36,
+    "pages": [
+      591,
+      591
+    ]
+  },
+  {
+    "id": 87,
+    "name_arabic": "الأعلى",
+    "name_english": "Al-A'la",
+    "name_transliteration": "Al-'A`lá",
+    "verses_count": 19,
+    "revelation_place": "Makkah",
+    "revelation_order": 8,
+    "pages": [
+      591,
+      592
+    ]
+  },
+  {
+    "id": 88,
+    "name_arabic": "الغاشية",
+    "name_english": "Al-Ghashiyah",
+    "name_transliteration": "Al-Ghāshiyah",
+    "verses_count": 26,
+    "revelation_place": "Makkah",
+    "revelation_order": 68,
+    "pages": [
+      592,
+      592
+    ]
+  },
+  {
+    "id": 89,
+    "name_arabic": "الفجر",
+    "name_english": "Al-Fajr",
+    "name_transliteration": "Al-Fajr",
+    "verses_count": 30,
+    "revelation_place": "Makkah",
+    "revelation_order": 10,
+    "pages": [
+      593,
+      594
+    ]
+  },
+  {
+    "id": 90,
+    "name_arabic": "البلد",
+    "name_english": "Al-Balad",
+    "name_transliteration": "Al-Balad",
+    "verses_count": 20,
+    "revelation_place": "Makkah",
+    "revelation_order": 35,
+    "pages": [
+      594,
+      594
+    ]
+  },
+  {
+    "id": 91,
+    "name_arabic": "الشمس",
+    "name_english": "Ash-Shams",
+    "name_transliteration": "Ash-Shams",
+    "verses_count": 15,
+    "revelation_place": "Makkah",
+    "revelation_order": 26,
+    "pages": [
+      595,
+      595
+    ]
+  },
+  {
+    "id": 92,
+    "name_arabic": "الليل",
+    "name_english": "Al-Layl",
+    "name_transliteration": "Al-Layl",
+    "verses_count": 21,
+    "revelation_place": "Makkah",
+    "revelation_order": 9,
+    "pages": [
+      595,
+      596
+    ]
+  },
+  {
+    "id": 93,
+    "name_arabic": "الضحى",
+    "name_english": "Ad-Duhaa",
+    "name_transliteration": "Ađ-Đuĥaá",
+    "verses_count": 11,
+    "revelation_place": "Makkah",
+    "revelation_order": 11,
+    "pages": [
+      596,
+      596
+    ]
+  },
+  {
+    "id": 94,
+    "name_arabic": "الشرح",
+    "name_english": "Ash-Sharh",
+    "name_transliteration": "Ash-Sharĥ",
+    "verses_count": 8,
+    "revelation_place": "Makkah",
+    "revelation_order": 12,
+    "pages": [
+      596,
+      596
+    ]
+  },
+  {
+    "id": 95,
+    "name_arabic": "التين",
+    "name_english": "At-Tin",
+    "name_transliteration": "At-Tīn",
+    "verses_count": 8,
+    "revelation_place": "Makkah",
+    "revelation_order": 28,
+    "pages": [
+      597,
+      597
+    ]
+  },
+  {
+    "id": 96,
+    "name_arabic": "العلق",
+    "name_english": "Al-'Alaq",
+    "name_transliteration": "Al-`Alaq",
+    "verses_count": 19,
+    "revelation_place": "Makkah",
+    "revelation_order": 1,
+    "pages": [
+      597,
+      597
+    ]
+  },
+  {
+    "id": 97,
+    "name_arabic": "القدر",
+    "name_english": "Al-Qadr",
+    "name_transliteration": "Al-Qadr",
+    "verses_count": 5,
+    "revelation_place": "Makkah",
+    "revelation_order": 25,
+    "pages": [
+      598,
+      598
+    ]
+  },
+  {
+    "id": 98,
+    "name_arabic": "البينة",
+    "name_english": "Al-Bayyinah",
+    "name_transliteration": "Al-Bayyinah",
+    "verses_count": 8,
+    "revelation_place": "Madinah",
+    "revelation_order": 100,
+    "pages": [
+      598,
+      599
+    ]
+  },
+  {
+    "id": 99,
+    "name_arabic": "الزلزلة",
+    "name_english": "Az-Zalzalah",
+    "name_transliteration": "Az-Zalzalah",
+    "verses_count": 8,
+    "revelation_place": "Madinah",
+    "revelation_order": 93,
+    "pages": [
+      599,
+      599
+    ]
+  },
+  {
+    "id": 100,
+    "name_arabic": "العاديات",
+    "name_english": "Al-'Adiyat",
+    "name_transliteration": "Al-`Ādiyāt",
+    "verses_count": 11,
+    "revelation_place": "Makkah",
+    "revelation_order": 14,
+    "pages": [
+      599,
+      600
+    ]
+  },
+  {
+    "id": 101,
+    "name_arabic": "القارعة",
+    "name_english": "Al-Qari'ah",
+    "name_transliteration": "Al-Qāri`ah",
+    "verses_count": 11,
+    "revelation_place": "Makkah",
+    "revelation_order": 30,
+    "pages": [
+      600,
+      600
+    ]
+  },
+  {
+    "id": 102,
+    "name_arabic": "التكاثر",
+    "name_english": "At-Takathur",
+    "name_transliteration": "At-Takāthur",
+    "verses_count": 8,
+    "revelation_place": "Makkah",
+    "revelation_order": 16,
+    "pages": [
+      600,
+      600
+    ]
+  },
+  {
+    "id": 103,
+    "name_arabic": "العصر",
+    "name_english": "Al-'Asr",
+    "name_transliteration": "Al-`Aşr",
+    "verses_count": 3,
+    "revelation_place": "Makkah",
+    "revelation_order": 13,
+    "pages": [
+      601,
+      601
+    ]
+  },
+  {
+    "id": 104,
+    "name_arabic": "الهمزة",
+    "name_english": "Al-Humazah",
+    "name_transliteration": "Al-Humazah",
+    "verses_count": 9,
+    "revelation_place": "Makkah",
+    "revelation_order": 32,
+    "pages": [
+      601,
+      601
+    ]
+  },
+  {
+    "id": 105,
+    "name_arabic": "الفيل",
+    "name_english": "Al-Fil",
+    "name_transliteration": "Al-Fīl",
+    "verses_count": 5,
+    "revelation_place": "Makkah",
+    "revelation_order": 19,
+    "pages": [
+      601,
+      601
+    ]
+  },
+  {
+    "id": 106,
+    "name_arabic": "قريش",
+    "name_english": "Quraysh",
+    "name_transliteration": "Quraysh",
+    "verses_count": 4,
+    "revelation_place": "Makkah",
+    "revelation_order": 29,
+    "pages": [
+      602,
+      602
+    ]
+  },
+  {
+    "id": 107,
+    "name_arabic": "الماعون",
+    "name_english": "Al-Ma'un",
+    "name_transliteration": "Al-Mā`ūn",
+    "verses_count": 7,
+    "revelation_place": "Makkah",
+    "revelation_order": 17,
+    "pages": [
+      602,
+      602
+    ]
+  },
+  {
+    "id": 108,
+    "name_arabic": "الكوثر",
+    "name_english": "Al-Kawthar",
+    "name_transliteration": "Al-Kawthar",
+    "verses_count": 3,
+    "revelation_place": "Makkah",
+    "revelation_order": 15,
+    "pages": [
+      602,
+      602
+    ]
+  },
+  {
+    "id": 109,
+    "name_arabic": "الكافرون",
+    "name_english": "Al-Kafirun",
+    "name_transliteration": "Al-Kāfirūn",
+    "verses_count": 6,
+    "revelation_place": "Makkah",
+    "revelation_order": 18,
+    "pages": [
+      603,
+      603
+    ]
+  },
+  {
+    "id": 110,
+    "name_arabic": "النصر",
+    "name_english": "An-Nasr",
+    "name_transliteration": "An-Naşr",
+    "verses_count": 3,
+    "revelation_place": "Madinah",
+    "revelation_order": 114,
+    "pages": [
+      603,
+      603
+    ]
+  },
+  {
+    "id": 111,
+    "name_arabic": "المسد",
+    "name_english": "Al-Masad",
+    "name_transliteration": "Al-Masad",
+    "verses_count": 5,
+    "revelation_place": "Makkah",
+    "revelation_order": 6,
+    "pages": [
+      603,
+      603
+    ]
+  },
+  {
+    "id": 112,
+    "name_arabic": "الإخلاص",
+    "name_english": "Al-Ikhlas",
+    "name_transliteration": "Al-'Ikhlāş",
+    "verses_count": 4,
+    "revelation_place": "Makkah",
+    "revelation_order": 22,
+    "pages": [
+      604,
+      604
+    ]
+  },
+  {
+    "id": 113,
+    "name_arabic": "الفلق",
+    "name_english": "Al-Falaq",
+    "name_transliteration": "Al-Falaq",
+    "verses_count": 5,
+    "revelation_place": "Makkah",
+    "revelation_order": 20,
+    "pages": [
+      604,
+      604
+    ]
+  },
+  {
+    "id": 114,
+    "name_arabic": "الناس",
+    "name_english": "An-Nas",
+    "name_transliteration": "An-Nās",
+    "verses_count": 6,
+    "revelation_place": "Makkah",
+    "revelation_order": 21,
+    "pages": [
+      604,
+      604
+    ]
+  }
+]
