@@ -347,7 +347,7 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        SELECT * FROM employees AT (VERSION => 2);
+        SELECT * FROM employees AT (VERSION => 3);
         """
     )
     return
