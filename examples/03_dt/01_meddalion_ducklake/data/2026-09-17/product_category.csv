@@ -1,0 +1,11 @@
+subcategory_code,subcategory,category,updated_date
+ELEC_COMP,Laptops,Electronics,2026-09-17 07:00:00
+ELEC_COMP,Computers,Electronics,2026-09-17 08:00:00
+ELEC_ACC,Accessories,electronics,2026-09-17 08:00:00
+ELEC_MOB,Mobile Phones,ELECTRONICS,2026-09-17 08:00:00
+ELEC_AUD,Audio,Electronics,2026-09-17 08:00:00
+HOME_FURN,Furniture,Home & Office,2026-09-17 08:00:00
+HOME_STAT,Stationery,Home & Office,2026-09-17 08:00:00
+HOME_KIT,Kitchen Appliances,Home Appliances,2026-09-17 08:00:00
+SPRT_FIT,Fitness,Sports,2026-09-17 08:00:00
+OTHER,Other,Other,2026-09-17 08:00:00

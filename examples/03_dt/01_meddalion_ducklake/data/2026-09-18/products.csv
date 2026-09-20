@@ -1,0 +1,4 @@
+product_id,product_name,subcategory_code,unit_price,updated_date
+101,Laptop,ELEC_COMP,1399.00,2026-09-18 08:00:00
+102,Mouse,ELEC_ACC,25.00,2026-09-18 08:05:00
+116,Webcam,ELEC_ACC,79.00,2026-09-18 08:10:00

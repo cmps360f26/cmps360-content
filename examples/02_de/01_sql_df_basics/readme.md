@@ -1,0 +1,1 @@
+For sql basics exampes you can use `sql_basics.ipynb` Jupyter notebook or `sql_basics.py` marimo notebook. Install VS Code Marimo extension.

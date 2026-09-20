@@ -1,0 +1,4 @@
+order_id,customer_id,order_date,status,updated_date
+1023,6,2026-09-19,completed,2026-09-20 10:10:00
+1025,18,20-09-2026,completed,2026-09-20 13:50:00
+1026,12,2026-09-20,PENDING,2026-09-20 15:30:00

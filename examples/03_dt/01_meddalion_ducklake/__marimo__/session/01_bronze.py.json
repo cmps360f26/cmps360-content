@@ -1,0 +1,328 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "a4dd788b818208466d1bc1bf56120d90",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"01-bronze-layer-ingest-raw-extracts\">01 - Bronze Layer: Ingest Raw Extracts</h1>\n<span class=\"paragraph\">Bronze stores source CSVs <strong>as-is</strong> without any cleaning.</span>\n<span class=\"paragraph\">What this notebook adds (minimal change):</span>\n<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Column</th>\n<th style=\"text-align: left;\">Meaning</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\"><code>_load_date</code></td>\n<td style=\"text-align: left;\">Processing date (<code>run_date</code>) \u2014 which extract folder was loaded</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><code>_ingested_at</code></td>\n<td style=\"text-align: left;\">When this notebook wrote the rows</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><code>_source_file</code></td>\n<td style=\"text-align: left;\">Path of the CSV file</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">Re-running the same <code>run_date</code> deletes that day's Bronze rows and loads them again (idempotent daily load). Other dates stay in Bronze.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "5eb93f26b71e9cd207c855c8ccd14446",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"0-processing-date\">0. Processing date</h2>\n<span class=\"paragraph\">Change <code>run_date</code> to match a folder under <code>data/</code>.</span>\n<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\"><code>run_date</code></th>\n<th style=\"text-align: left;\">Extract type</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\"><code>2026-09-17</code></td>\n<td style=\"text-align: left;\">First (full) load</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><code>2026-09-18</code> \u2026 <code>2026-09-20</code></td>\n<td style=\"text-align: left;\">Incremental (new and changed rows)</td>\n</tr>\n</tbody>\n</table></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "08fcc2f5db9861f0416d78b481eddf9b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "run_date     = 2026-09-18\nextract_dir  = c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/data/2026-09-18\ncatalog      = c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/lakehouse/sales_lake_catalog.db\ndata files path = c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/lakehouse/sales_lake_data\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "606fac7174ed0008746b629311885153",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"1-attach-the-existing-ducklake-catalog\">1. Attach the existing DuckLake catalog</h2>\n<span class=\"paragraph\">Connect to the catalog created in setup.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "1e11d90fbf90887f797b3408679da0ce",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lEQa-0' random-id='f7d33c8d-02d5-9bb1-b442-32a12a0d110f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;},{&#92;&quot;database_name&#92;&quot;:&#92;&quot;sales_lake&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "4dd4614069367b4420c03b860631cd10",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-explore-the-raw-csv-files-using-duckdb\">2. Explore the raw CSV files using DuckDB</h2>\n<span class=\"paragraph\"><code>read_csv</code> is a <strong>DuckDB</strong> function. <code>all_varchar = true</code> keeps dirty values such as <code>bad_price</code> and <code>1,500.00</code> as text so Bronze does not hide quality problems.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "7ab31dc48216b2c1e5b0d4c4d547e34f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Xref-0' random-id='3517f4e0-9043-4d31-6004-ef7a26c824aa'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;customer_id&#92;&quot;:&#92;&quot;2&#92;&quot;,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Sara Ahmed&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;sara@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;QAT&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:10:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:&#92;&quot;5&#92;&quot;,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Mohammed Khalid&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;  mohammed.k@example.com  &#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;QAT&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:12:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Khalid Rahman&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;khalid.rahman@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Wakrah&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 10:00:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:&#92;&quot;16&#92;&quot;,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Reem Al-Ali&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;reem.alali@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:null,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 11:30:00&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;customer_id&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;customer_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;email&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;city&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;country&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "c220b30c7cb07a6f33cbf8fc437644c8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-create-bronze-tables-if-they-do-not-exist\">3. Create Bronze tables if they do not exist</h2>\n<span class=\"paragraph\">All source columns are <code>VARCHAR</code>. Types are applied later in Silver.</span>\n<span class=\"paragraph\"><code>CREATE TABLE</code> in the <strong>DuckLake</strong>: the table definition is stored in the catalog.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "f05ea61e949965c70e8d2e036c222ed1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "642e29dd080e59c53b4d1e45852da688",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-load-each-extract-file-for-run_date\">4. Load each extract file for <code>run_date</code></h2>\n<span class=\"paragraph\">Pattern for every table:</span>\n<ol>\n<li><code>DELETE</code> rows already loaded for this <code>_load_date</code> (safe re-run)</li>\n<li><code>INSERT</code> from <code>read_csv</code></li>\n<li>Tag the DuckLake snapshot with <code>set_commit_message</code></li>\n</ol>\n<span class=\"paragraph\">Incremental folders contain <strong>only changed/new rows</strong>. Bronze <strong>appends</strong> them as a new <code>_load_date</code>. Silver MERGEs that day's keys into the curated tables.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "108cf973cfa43f4cb60c995d401fc0ed",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "af48bc097738c22df1b9445fadb0f8df",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "3649c019a7d37ceccf110c54bcf454dd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "9e897d1db8fca127381902d97d2f60e6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "5ceee13b8402c65e39b14147110ec175",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "af54eb41a540f9d5e96fe33053bb580e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"5-validation\">5. Validation</h2>\n<span class=\"paragraph\">For <code>2026-09-17</code> you should see about 16 customers (including a duplicate id), 16 products, 10 category rows (including a duplicate code), 18 orders, and 34 order items (including a duplicate <code>order_item_id</code>).</span>\n<span class=\"paragraph\">Dirty values such as <code>bad_price</code>, blank emails, and <code>shiped</code> must still be visible \u2014 Bronze does not clean them.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "cc4ee2fb92613a6f7374ad11e22dbd8f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ROlb-0' random-id='450f5b4a-24ca-96ce-e324-193fa53a08b8'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;table_name&#92;&quot;:&#92;&quot;customers&#92;&quot;,&#92;&quot;row_count&#92;&quot;:4},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;order_items&#92;&quot;,&#92;&quot;row_count&#92;&quot;:5},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;orders&#92;&quot;,&#92;&quot;row_count&#92;&quot;:5},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;product_category&#92;&quot;,&#92;&quot;row_count&#92;&quot;:2},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;products&#92;&quot;,&#92;&quot;row_count&#92;&quot;:3}]&quot;' data-total-rows='5' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;table_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;row_count&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "549122998e161b32181a88b5496863a1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h4 id=\"list-all-tables-in-the-bronze-schema-of-the-sales_lake-catalog\">List all tables in the 'bronze' schema of the 'sales_lake' catalog.</h4></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "53eae9770f5d79fb7712081fdba3886a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='TqIu-0' random-id='77e47a5c-1fae-2327-a20d-7358f7d4af2d'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;table_schema&#92;&quot;:&#92;&quot;bronze&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;customers&#92;&quot;},{&#92;&quot;table_schema&#92;&quot;:&#92;&quot;bronze&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;order_items&#92;&quot;},{&#92;&quot;table_schema&#92;&quot;:&#92;&quot;bronze&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;orders&#92;&quot;},{&#92;&quot;table_schema&#92;&quot;:&#92;&quot;bronze&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;product_category&#92;&quot;},{&#92;&quot;table_schema&#92;&quot;:&#92;&quot;bronze&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;products&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;table_schema&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;table_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "ff63ebbbc04e981c736abc1c5fcc127c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h4 id=\"display-rows-from-bronzeproducts-with-invalid-or-missing-values-in-unit_price-or-subcategory_code\">Display rows from bronze.products with invalid or missing values in 'unit_price' or 'subcategory_code'.</h4></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "15c109b57d27040386716fdffe808a3a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='DnEU-0' random-id='0d92610b-c364-07d3-a11b-b6b91ae8a590'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;product_id&#92;&quot;:&#92;&quot;102&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Mouse&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:null,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 09:00:00&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;_ingested_at&#92;&quot;:&#92;&quot;2026-09-20 12:35:45.074306&#92;&quot;,&#92;&quot;_source_file&#92;&quot;:&#92;&quot;c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/data/2026-09-17/products.csv&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:&#92;&quot;104&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Desk&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_FURN&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;bad_price&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 11:00:00&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;_ingested_at&#92;&quot;:&#92;&quot;2026-09-20 12:35:45.074306&#92;&quot;,&#92;&quot;_source_file&#92;&quot;:&#92;&quot;c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/data/2026-09-17/products.csv&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:&#92;&quot;115&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Yoga Mat&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;SPRT_FIT&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;-25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 13:00:00&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;_ingested_at&#92;&quot;:&#92;&quot;2026-09-20 12:35:45.074306&#92;&quot;,&#92;&quot;_source_file&#92;&quot;:&#92;&quot;c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/data/2026-09-17/products.csv&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='8' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;product_id&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;unit_price&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;_load_date&quot;,[&quot;date&quot;,&quot;date&quot;]],[&quot;_ingested_at&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]],[&quot;_source_file&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "81322e7e615d8714307987e25ea22d36",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h4 id=\"releasing-the-lakehouse-catalog-with-detach-database-ensures-all-file-handles-are-closed-and-the-catalog-can-safely-be-used-in-another-notebook\">Releasing the lakehouse catalog with DETACH DATABASE ensures all file handles are closed and the catalog can safely be used in another notebook.</h4></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "0f24e698d7c2c5025997d44b47d8a64f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ecfG-0' random-id='cc744cb0-25de-33a3-a526-297e0f8b06bd'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='1' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pvdt",
+      "code_hash": "b44de5fd29874cc0e25cdb3a2a8a883d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"summary\">Summary</h2>\n<ul>\n<li>Ingested one extract folder into DuckLake tables under <code>bronze</code>.</li>\n<li>Preserved raw text values and added <code>_load_date</code>, <code>_ingested_at</code>, and <code>_source_file</code>.</li>\n<li>Made the load re-runnable for the same <code>run_date</code> without touching other dates.</li>\n</ul>\n<span class=\"paragraph\"><strong>Learned:</strong> Bronze is the landing zone. Data cleaning is done in Silver. Next, open <code>02_silver.py</code> with the same <code>run_date</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

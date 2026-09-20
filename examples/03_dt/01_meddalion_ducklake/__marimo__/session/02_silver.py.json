@@ -1,0 +1,640 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "f6e67a50b6e83b5b40cd5d8241e4d96e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"02-silver-layer-clean-and-validate\">02 - Silver Layer: Clean and Validate</h2>\n<span class=\"paragraph\">Bronze stores raw extracts as text. Silver converts them into typed, trusted tables.</span>\n<span class=\"paragraph\">Rows that fail validation are kept in the <code>quarantine</code> schema, along with the reason.</span>\n<h4 id=\"data-loading-flow\">Data loading flow</h4>\n<ol>\n<li>Read Bronze rows with <code>_load_date = run_date</code>.</li>\n<li>Clean and validate using SQL.</li>\n<li><strong>MERGE</strong> valid rows into Silver: update if the key exists, insert if new.</li>\n<li>Insert invalid rows into <code>quarantine</code>.</li>\n</ol>\n<h1 id=\"_1\"></h1>\n<span class=\"paragraph\">Silver is loaded incrementally: only new/changed rows for each run_date are processed (not all history).</span>\n<span class=\"paragraph\">Ensure <code>run_date</code> matches in <code>01_bronze.py</code> and <code>03_gold.py</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "e6110edf1dfc5b90b1e31af42f982616",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Building Silver for run_date = 2026-09-18\nOnly Bronze rows with _load_date = 2026-09-18 will be processed.\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "vblA",
+      "code_hash": "4b2f61932f7f6ed9cf970c4b4c2951d1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"1-attach-the-ducklake-catalog\">1. Attach the DuckLake catalog</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "1e11d90fbf90887f797b3408679da0ce",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='bkHC-0' random-id='26320983-6cec-05bb-b092-fbc51b704370'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;},{&#92;&quot;database_name&#92;&quot;:&#92;&quot;sales_lake&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "5860f7a94b44c8cc78af7b387644b606",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"2-understanding-the-merge-pattern\">2. Understanding the MERGE Pattern</h3>\n<span class=\"paragraph\">The <code>MERGE INTO</code> command lets us update or insert rows in a table, depending on whether the key (like an ID) already exists:\n| What happens when?         | MERGE does this                    | Example                          |\n|---------------------- | -----------------------------------|----------------------------------|\n| Key is new            | <code>WHEN NOT MATCHED THEN INSERT</code>      | Adding new customer 16 on 18 Sep |\n| Key already exists    | <code>WHEN MATCHED THEN UPDATE</code>          | Updating address for customer 2  |</span>\n<span class=\"paragraph\"><strong>Important:</strong></span>\n<ul>\n<li>Only create the Silver tables once using <code>CREATE TABLE IF NOT EXISTS</code>.</li>\n<li>Do <strong>not</strong> use <code>CREATE OR REPLACE</code> every time. That would erase existing data!</li>\n<li>Temporary scratch tables are made in memory for cleaning and preparing data.\nOnly the good, cleaned rows are saved into DuckLake\u2019s <code>silver</code> and <code>quarantine</code> tables on disk.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "160abf8cf297cec476e85ef90b2f6867",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"3-create-typed-silver-and-quarantine-tables\">3. Create typed Silver and Quarantine tables</h3>\n<span class=\"paragraph\">Bronze columns are all <code>VARCHAR</code>. Silver applies types: integers, decimals, dates.</span>\n<span class=\"paragraph\"><code>CREATE TABLE IF NOT EXISTS</code> is safe to re-run. It does not delete existing Silver rows.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "f4491aadffaab52195e856264da25a5c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "e6984b8681862d383b0e915927139a07",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"4-explore-bronze-data-before-cleaning\">4. Explore Bronze data before cleaning</h3>\n<span class=\"paragraph\">These queries only look at <code>_load_date = run_date</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "2ad6d3bd8f7bd284d96a97fa6b4d5744",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='RGSE-0' random-id='a299fea7-50c4-a803-bb58-3cef5f3c9165'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[]&quot;' data-total-rows='0' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;customer_id&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;customer_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;email&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "c0178a3ee86641cd2d6f7ca1e5e22298",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Kclp-0' random-id='ef9f075a-7c73-45f9-5db9-a28b2d0035cd'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[]&quot;' data-total-rows='0' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;product_id&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;unit_price&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "0504bfadd7ee59c7fd75137de6e4e718",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"5-product-category-cleaning-and-standardization\">5. Product Category Cleaning and Standardization</h3>\n<span class=\"paragraph\">Cleaning rules:</span>\n<ul>\n<li>Trim text; store codes in upper case</li>\n<li><code>electronics</code> / <code>Electronics</code> \u2192 <code>ELECTRONICS</code></li>\n<li>Blank subcategory name \u2192 <code>Unknown</code></li>\n<li>If file to load has the same code twice, keep the row with the latest <code>updated_date</code></li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "2276ea86ba7b365432f543ff89cd9915",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Hstk-0' random-id='89060a47-7554-370c-eb0b-283ce72b06ae'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_MOB&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Mobile Phones&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;category&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "a5309700e8827e4e044ee35e50a118a0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nWHF-0' random-id='39943bdf-09e3-94e8-a0d9-3410117a7781'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_MOB&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Mobile Phones&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;category&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "64a25a244432911e98a65a12771a3d5c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "2b0f9f31a38939a4a37ba8db19897f4f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ZHCJ-0' random-id='2d4d4a09-c577-3632-14b0-c7254a0db7e1'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_AUD&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Audio&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_COMP&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Computers&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_MOB&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Mobile Phones&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 07:30:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_FURN&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Furniture&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Home &amp; Office&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_KIT&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Kitchen Appliances&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Home Appliances&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_STAT&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Stationery&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Home &amp; Office&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;OTHER&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Other&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Other&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;},{&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;SPRT_FIT&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Fitness&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Sports&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;}]&quot;' data-total-rows='9' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;category&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "494d69a87e947cd8918b623d2514f566",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"6-customers-cleaning-and-standardization\">6. Customers Cleaning and Standardization</h3>\n<span class=\"paragraph\">Cleaning rules:</span>\n<ul>\n<li>Trim names</li>\n<li>Lower-case emails; if the value has no <code>@</code> and <code>.</code>, store NULL (keep the customer)</li>\n<li>Fix city typos (<code>Dohaa</code> \u2192 <code>Doha</code>); replace hyphens with spaces (<code>Al-Wakrah</code> \u2192 <code>Al Wakrah</code>)</li>\n<li>Map country labels to full country names: QAT \u2192 <code>Qatar</code>, UAE \u2192 <code>United Arab Emirates</code>, KSA \u2192 <code>Saudi Arabia</code></li>\n<li>Keep the latest row per <code>customer_id</code></li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "3acdcd5c652618dcf5411ef824365d03",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='qnkX-0' random-id='25b25083-f6c5-c446-1cb7-2e14b46682c7'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;customer_id&#92;&quot;:2,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Sara Ahmed&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;sara@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:10:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Mohammed Khalid&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;mohammed.k@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:12:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:11,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Khalid Rahman&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;khalid.rahman@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Wakrah&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 10:00:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:16,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Reem Al-Ali&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;reem.alali@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:null,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 11:30:00&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;email&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;city&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;country&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "6fb89afb0e28f42dcf580a63fac95b01",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='TqIu-0' random-id='e2b7bc9e-32c9-6d85-af59-a461f84170a4'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[]&quot;' data-total-rows='0' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;rows&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "36e14eda73d60252053d6529656fdaa1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "c6b8a14654e9908edeb93fd11a405655",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='DnEU-0' random-id='6f3043b6-9d03-afc0-ea97-17943e839cad'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.customers 2026-09-18&#92;&quot;,&#92;&quot;row_count&#92;&quot;:4},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.customers&#92;&quot;,&#92;&quot;row_count&#92;&quot;:16}]&quot;' data-total-rows='2' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;source&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;row_count&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "c2f70458c34a9e3a6a8e8b150f1fef16",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ulZA-0' random-id='bac48f16-9f02-0203-c167-a08afb61551b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;customer_id&#92;&quot;:1,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;ali hassan&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;ali@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 10:00:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:2,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Sara Ahmed&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;sara@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:10:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:3,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Omar Saleh&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;omar@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Wakrah&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 09:00:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:4,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Fatima Al-Thani&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;fatima.althani@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 15:30:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Mohammed Khalid&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;mohammed.k@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 09:12:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:6,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Noor Abdullah&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;noor.abdullah@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Khor&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 11:20:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:7,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Hassan Ibrahim&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;hassan.ibrahim@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Umm Salal&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 14:10:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:8,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Layla Mahmoud&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;layla.mahmoud@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Daayen&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 09:05:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:9,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Youssef Nasser&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;youssef.nasser@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Dubai&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;United Arab Emirates&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 16:40:00&#92;&quot;},{&#92;&quot;customer_id&#92;&quot;:10,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Amina Farid&#92;&quot;,&#92;&quot;email&#92;&quot;:&#92;&quot;amina.farid@example.com&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 10:25:00&#92;&quot;}]&quot;' data-total-rows='16' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;email&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;city&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;country&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "a43a0e45450441fd7cadcd4c8c8c687d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"7-products-cleaning-and-standardization\">7. Products Cleaning and Standardization</h3>\n<span class=\"paragraph\">A product is <strong>valid</strong> when:</span>\n<ul>\n<li><code>product_id</code> is an integer</li>\n<li><code>unit_price</code> is a number and <code>&gt;= 0</code></li>\n</ul>\n<span class=\"paragraph\">Blank or unknown <code>subcategory_code</code> is mapped to <strong><code>OTHER</code></strong> (enrichment, not a reject).</span>\n<span class=\"paragraph\">Invalid products go to <code>quarantine.products</code>. If a later extract corrects the price, MERGE will load the product into Silver and the quarantine row for that key is removed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pvdt",
+      "code_hash": "c12c6e4f79b1215e7840d10e945043ff",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Pvdt-0' random-id='e6c9ca8c-a89a-fbc8-a888-2e5ae13bc026'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;product_id&#92;&quot;:101,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Laptop&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_COMP&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;1399.00&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:102,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Mouse&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:116,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Webcam&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;79.00&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZBYS",
+      "code_hash": "a7ec66f742f424d7b64d8f97d08e6cad",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ZBYS-0' random-id='ced397a4-696b-f9c9-e43c-d9d61f3c29c1'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;product_id&#92;&quot;:101,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Laptop&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_COMP&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Computers&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;1399.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 08:00:00&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:102,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Mouse&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 08:05:00&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:116,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Webcam&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;79.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 08:10:00&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;category&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aLJB",
+      "code_hash": "2a3f1f29ded860456ae5d3e1e47d11ba",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nHfw",
+      "code_hash": "020199a0ac767b56d062a92d3f2da023",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nHfw-0' random-id='6ba3e30a-6f08-9255-b3f7-1b50882c0377'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;table_name&#92;&quot;:&#92;&quot;bronze.products 2026-09-18&#92;&quot;,&#92;&quot;row_count&#92;&quot;:3},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;silver.products&#92;&quot;,&#92;&quot;row_count&#92;&quot;:15},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;quarantine.products&#92;&quot;,&#92;&quot;row_count&#92;&quot;:2}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;table_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;row_count&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "a982d26d7fdf44554663bc95594a490f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='xXTn-0' random-id='7da1cc37-7a33-2326-540d-93cf26820371'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;product_id&#92;&quot;:104,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Desk&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_FURN&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:null,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 11:00:00&#92;&quot;,&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Invalid unit_price&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;},{&#92;&quot;product_id&#92;&quot;:115,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Yoga Mat&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;SPRT_FIT&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;-25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 13:00:00&#92;&quot;,&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;unit_price must be &#92;u003e= 0&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]],[&quot;rejection_reason&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;_load_date&quot;,[&quot;date&quot;,&quot;date&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "AjVT",
+      "code_hash": "46f9e0c53ab3bab3367f99523d8fb36f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"8-orders-cleaning-and-standardization\">8. Orders Cleaning and Standardization</h3>\n<span class=\"paragraph\">Parse <code>order_date</code> with three common formats. Reject the row when:</span>\n<ul>\n<li><code>order_id</code> or <code>order_date</code> is missing</li>\n<li><code>order_date</code> is after <code>run_date</code> (a future date)</li>\n<li><code>customer_id</code> is not in <code>silver.customers</code></li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "pHFh",
+      "code_hash": "5b629849d0d0c94db9d2f3f1249f8b49",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='pHFh-0' random-id='23652bb9-4048-079e-2b6d-e500dde6fdf2'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_id&#92;&quot;:1006,&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1010,&#92;&quot;customer_id&#92;&quot;:10,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;customer_id&#92;&quot;:16,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1020,&#92;&quot;customer_id&#92;&quot;:2,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Pending&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;customer_id&#92;&quot;:8,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_date&quot;,[&quot;date&quot;,&quot;date&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "NCOB",
+      "code_hash": "76d86cda139ee27e0fde5d0233cd104a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='NCOB-0' random-id='ec4419e5-e29d-d0d6-96a8-3d65eac85e18'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_id&#92;&quot;:1006,&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 10:15:00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1010,&#92;&quot;customer_id&#92;&quot;:10,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 10:16:00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;customer_id&#92;&quot;:16,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 14:00:00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1020,&#92;&quot;customer_id&#92;&quot;:2,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Pending&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 15:30:00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;customer_id&#92;&quot;:8,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-18&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:45:00&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_date&quot;,[&quot;date&quot;,&quot;date&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aqbW",
+      "code_hash": "6c273da2f0ba25edae86f0b05dc875a5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TRpd",
+      "code_hash": "b5bb35116f487d9100b3e8b97f4335f7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='TRpd-0' random-id='a6e83d20-dccb-12d5-2f7c-d3b366175f57'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;table_name&#92;&quot;:&#92;&quot;bronze.orders 2026-09-18&#92;&quot;,&#92;&quot;row_count&#92;&quot;:5},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;silver.orders&#92;&quot;,&#92;&quot;row_count&#92;&quot;:19},{&#92;&quot;table_name&#92;&quot;:&#92;&quot;quarantine.orders&#92;&quot;,&#92;&quot;row_count&#92;&quot;:2}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;table_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;row_count&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TXez",
+      "code_hash": "02e278e357549a1752897c94fa7fce0d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='TXez-0' random-id='9055daa9-f9be-f588-2cf2-14bf89f2a588'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_id&#92;&quot;:1004,&#92;&quot;customer_id&#92;&quot;:3,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2099-01-01&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Pending&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 08:00:00&#92;&quot;,&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Future order_date&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1003,&#92;&quot;customer_id&#92;&quot;:99,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-17 10:00:00&#92;&quot;,&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Unknown customer&#92;&quot;,&#92;&quot;_load_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_date&quot;,[&quot;date&quot;,&quot;date&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]],[&quot;rejection_reason&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;_load_date&quot;,[&quot;date&quot;,&quot;date&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "dNNg",
+      "code_hash": "f419aa0a6db1d70e1cb31be13d2d0ec6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"9-order-items-cleaning-and-standardization\">9. Order items Cleaning and Standardization</h3>\n<span class=\"paragraph\">A line is <strong>valid</strong> when:</span>\n<ul>\n<li><code>order_item_id</code> is unique (keep the latest based on <code>updated_date</code> if duplicated)</li>\n<li><code>quantity</code> is an integer <code>&gt; 0</code></li>\n<li>the order exists in Silver</li>\n<li>the product exists in Silver</li>\n<li>use the line price if available; if it is blank, use the catalog price</li>\n</ul>\n<span class=\"paragraph\"><code>line_total = quantity * unit_price</code></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "yCnT",
+      "code_hash": "929ded9388519e95ae9ffc0b7dc5170c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='yCnT-0' random-id='afe03f88-00c5-69c4-901a-998225386c9c'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_item_id&#92;&quot;:33,&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;product_id&#92;&quot;:116,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;79.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:00:00&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:34,&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;product_id&#92;&quot;:102,&#92;&quot;quantity&#92;&quot;:2,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:00:00&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:35,&#92;&quot;order_id&#92;&quot;:1020,&#92;&quot;product_id&#92;&quot;:101,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;1399.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:00:00&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:36,&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;product_id&#92;&quot;:115,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:00:00&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:37,&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;product_id&#92;&quot;:114,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;89.00&#92;&quot;,&#92;&quot;updated_date&#92;&quot;:&#92;&quot;2026-09-18 16:00:00&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_item_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;quantity&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;line_unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;updated_date&quot;,[&quot;datetime&quot;,&quot;datetime[\u03bcs]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "wlCL",
+      "code_hash": "c54c34b8f3d1fd926194509372407ed2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='wlCL-0' random-id='fb4f44ab-e842-6657-b070-dded7b9545d7'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_item_id&#92;&quot;:33,&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;product_id&#92;&quot;:116,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;79.00&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;79.00&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Webcam&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:34,&#92;&quot;order_id&#92;&quot;:1019,&#92;&quot;product_id&#92;&quot;:102,&#92;&quot;quantity&#92;&quot;:2,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Mouse&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:35,&#92;&quot;order_id&#92;&quot;:1020,&#92;&quot;product_id&#92;&quot;:101,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;1399.00&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;1399.00&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Laptop&#92;&quot;},{&#92;&quot;order_item_id&#92;&quot;:36,&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;product_id&#92;&quot;:115,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;product_name&#92;&quot;:null},{&#92;&quot;order_item_id&#92;&quot;:37,&#92;&quot;order_id&#92;&quot;:1021,&#92;&quot;product_id&#92;&quot;:114,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;line_unit_price&#92;&quot;:&#92;&quot;89.00&#92;&quot;,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;89.00&#92;&quot;,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Coffee Maker&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_item_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;quantity&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;line_unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "kqZH",
+      "code_hash": "c5af7598b08d72b5b0c96b7b1a0969fe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "wAgl",
+      "code_hash": "9dcc10323b31c76c61085eb31edfbafe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='wAgl-0' random-id='b84666bc-e73e-35b3-cd73-de3d78b0932c'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.order_items 2026-09-18&#92;&quot;,&#92;&quot;row_count&#92;&quot;:5},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.order_items&#92;&quot;,&#92;&quot;row_count&#92;&quot;:30},{&#92;&quot;source&#92;&quot;:&#92;&quot;quarantine.order_items&#92;&quot;,&#92;&quot;row_count&#92;&quot;:8}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;source&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;row_count&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lgWD",
+      "code_hash": "2820fa4c24a1bab0569f12b904dd5d4e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lgWD-0' random-id='e355283b-ab84-2961-3bb9-b15d2d48e618'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Unknown product&#92;&quot;,&#92;&quot;rows&#92;&quot;:5},{&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Quantity must be positive&#92;&quot;,&#92;&quot;rows&#92;&quot;:2},{&#92;&quot;rejection_reason&#92;&quot;:&#92;&quot;Unknown order&#92;&quot;,&#92;&quot;rows&#92;&quot;:1}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;rejection_reason&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;rows&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "yOPj",
+      "code_hash": "3c5027d510de412771d33fe378dd8522",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"10-sales-detail-ready-for-gold\">10. Sales detail (ready for Gold)</h3>\n<span class=\"paragraph\">One row per valid order line, joined to the customer and order. This table is rebuilt each run from current Silver (Or use MERGE instead of <code>CREATE OR REPLACE</code>).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "fwwy",
+      "code_hash": "dd86f30a20ff2e898a08e7c1d37a5630",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "LJZf",
+      "code_hash": "2b3e4c62d26505aeecc487caca6a32ab",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='LJZf-0' random-id='f1845352-a371-3c46-031d-91990281874f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;order_id&#92;&quot;:1001,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:1,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;ali hassan&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:1,&#92;&quot;product_id&#92;&quot;:101,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Laptop&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_COMP&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Computers&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;1500.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;1500.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1001,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:1,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;ali hassan&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:2,&#92;&quot;product_id&#92;&quot;:102,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Mouse&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;OTHER&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Other&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Other&#92;&quot;,&#92;&quot;quantity&#92;&quot;:2,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;25.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;50.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1002,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:2,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Sara Ahmed&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:4,&#92;&quot;product_id&#92;&quot;:103,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Keyboard&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:3,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;49.99&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;149.97&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1005,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:4,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Fatima Al-Thani&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:7,&#92;&quot;product_id&#92;&quot;:109,&#92;&quot;product_name&#92;&quot;:&#92;&quot;iPhone 16&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_MOB&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Mobile Phones&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;899.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;899.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1005,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:4,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Fatima Al-Thani&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Lusail&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:8,&#92;&quot;product_id&#92;&quot;:111,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Headphones&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_AUD&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Audio&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;129.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;129.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1006,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Mohammed Khalid&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:9,&#92;&quot;product_id&#92;&quot;:106,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Monitor 27 inch&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_COMP&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Computers&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:2,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;320.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;640.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1006,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:5,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Mohammed Khalid&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Doha&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:10,&#92;&quot;product_id&#92;&quot;:105,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Wireless Mouse&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_ACC&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Accessories&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;35.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;35.00&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1007,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Shipped&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:6,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Noor Abdullah&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Khor&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:11,&#92;&quot;product_id&#92;&quot;:107,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Office Chair&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_FURN&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Furniture&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Home &amp; Office&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;189.50&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;189.50&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1007,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Shipped&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:6,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Noor Abdullah&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Al Khor&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:12,&#92;&quot;product_id&#92;&quot;:112,&#92;&quot;product_name&#92;&quot;:&#92;&quot;Notebook A5&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;HOME_STAT&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Stationery&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Home &amp; Office&#92;&quot;,&#92;&quot;quantity&#92;&quot;:5,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;4.50&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;22.50&#92;&quot;},{&#92;&quot;order_id&#92;&quot;:1008,&#92;&quot;order_date&#92;&quot;:&#92;&quot;2026-09-17&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;Completed&#92;&quot;,&#92;&quot;customer_id&#92;&quot;:7,&#92;&quot;customer_name&#92;&quot;:&#92;&quot;Hassan Ibrahim&#92;&quot;,&#92;&quot;city&#92;&quot;:&#92;&quot;Umm Salal&#92;&quot;,&#92;&quot;country&#92;&quot;:&#92;&quot;Qatar&#92;&quot;,&#92;&quot;order_item_id&#92;&quot;:13,&#92;&quot;product_id&#92;&quot;:110,&#92;&quot;product_name&#92;&quot;:&#92;&quot;SAMSUNG GALAXY S25&#92;&quot;,&#92;&quot;subcategory_code&#92;&quot;:&#92;&quot;ELEC_MOB&#92;&quot;,&#92;&quot;subcategory&#92;&quot;:&#92;&quot;Mobile Phones&#92;&quot;,&#92;&quot;category&#92;&quot;:&#92;&quot;Electronics&#92;&quot;,&#92;&quot;quantity&#92;&quot;:1,&#92;&quot;unit_price&#92;&quot;:&#92;&quot;849.00&#92;&quot;,&#92;&quot;line_total&#92;&quot;:&#92;&quot;849.00&#92;&quot;}]&quot;' data-total-rows='30' data-total-columns='16' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;order_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;order_date&quot;,[&quot;date&quot;,&quot;date&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;customer_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;customer_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;city&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;country&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;order_item_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;product_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory_code&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;subcategory&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;category&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;quantity&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;unit_price&quot;,[&quot;number&quot;,&quot;decimal[10,2]&quot;]],[&quot;line_total&quot;,[&quot;number&quot;,&quot;decimal[12,2]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "urSm",
+      "code_hash": "90917b0da7fa9c37d27c867d329c39cd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"12-quality-checks\">12. Quality checks</h3>\n<span class=\"paragraph\">These counts should be <strong>0</strong>. If one is not zero, Silver still has a problem.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "jxvo",
+      "code_hash": "3098259e4f152c30f7dc0a17e7e7fa38",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='jxvo-0' random-id='49466da5-c567-4ae8-1957-4e027c061e92'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;duplicate_customers&#92;&quot;:0,&#92;&quot;bad_product_prices&#92;&quot;:0,&#92;&quot;orders_without_customer&#92;&quot;:0,&#92;&quot;items_without_order&#92;&quot;:0,&#92;&quot;items_without_product&#92;&quot;:0,&#92;&quot;non_positive_qty&#92;&quot;:0}]&quot;' data-total-rows='1' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;duplicate_customers&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;bad_product_prices&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;orders_without_customer&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;items_without_order&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;items_without_product&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;non_positive_qty&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "mWxS",
+      "code_hash": "411d2847d4bbaa85ae6a0a49cc4514b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='mWxS-0' random-id='70a7d2e8-c8e5-f074-ec35-fc0ac9b528a2'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.customers 2026-09-18&#92;&quot;,&#92;&quot;rows&#92;&quot;:4},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.customers&#92;&quot;,&#92;&quot;rows&#92;&quot;:16},{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.products 2026-09-18&#92;&quot;,&#92;&quot;rows&#92;&quot;:3},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.products&#92;&quot;,&#92;&quot;rows&#92;&quot;:15},{&#92;&quot;source&#92;&quot;:&#92;&quot;quarantine.products&#92;&quot;,&#92;&quot;rows&#92;&quot;:2},{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.orders 2026-09-18&#92;&quot;,&#92;&quot;rows&#92;&quot;:5},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.orders&#92;&quot;,&#92;&quot;rows&#92;&quot;:19},{&#92;&quot;source&#92;&quot;:&#92;&quot;quarantine.orders&#92;&quot;,&#92;&quot;rows&#92;&quot;:2},{&#92;&quot;source&#92;&quot;:&#92;&quot;bronze.order_items 2026-09-18&#92;&quot;,&#92;&quot;rows&#92;&quot;:5},{&#92;&quot;source&#92;&quot;:&#92;&quot;silver.order_items&#92;&quot;,&#92;&quot;rows&#92;&quot;:30}]&quot;' data-total-rows='12' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;source&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;rows&quot;,[&quot;integer&quot;,&quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "CcZR",
+      "code_hash": "81322e7e615d8714307987e25ea22d36",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h4 id=\"releasing-the-lakehouse-catalog-with-detach-database-ensures-all-file-handles-are-closed-and-the-catalog-can-safely-be-used-in-another-notebook\">Releasing the lakehouse catalog with DETACH DATABASE ensures all file handles are closed and the catalog can safely be used in another notebook.</h4></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "YWSi",
+      "code_hash": "5cdc8e27d181185fd6e532d6ea88b3e0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='YWSi-0' random-id='20cf7c3e-f013-21d5-03ab-fbeb48178465'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='1' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "zlud",
+      "code_hash": "155d5722d91cfaf0a5ad573bd476ddd9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"summary\">Summary</h3>\n<ul>\n<li>Processed only Bronze rows for the selected <code>run_date</code>.</li>\n<li>Cleaned data types, codes, dates, and statuses using SQL.</li>\n<li>Removed duplicates by keeping the latest record for each business key (<code>updated_date</code>).</li>\n<li>Used <code>MERGE INTO</code> to insert new and update existing records.</li>\n<li>Sent invalid products, orders, and items to the quarantine tables with reasons.</li>\n<li>Created and published <code>silver.sales_detail</code> for Gold analytics.</li>\n</ul>\n<span class=\"paragraph\"><strong>Key takeaway:</strong> Silver enforces data quality and supports incremental updates with MERGE. Quarantine keeps track of rejected records.</span>\n<span class=\"paragraph\">Next steps: Run <code>03_gold.py</code> with the same <code>run_date</code>. After verifying for 17 Sep, change <code>run_date</code> to <code>2026-09-18</code> in notebooks 01\u201303 (no need to rerun setup). You should see updates like Mouse changing to <code>ELEC_ACC</code> and orders moving from Pending to Completed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

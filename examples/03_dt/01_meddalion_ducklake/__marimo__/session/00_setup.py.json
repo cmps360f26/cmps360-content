@@ -1,0 +1,224 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "254e1cbb07846a7c9c976d48b38eb068",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"00-setup-the-retail-sales-lakehouse\">00 - Setup the Retail Sales Lakehouse</h1>\n<span class=\"paragraph\">This notebook creates a <strong>DuckLake</strong> environment for a Medallion Architecture pipeline.</span>\n<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Layer</th>\n<th style=\"text-align: left;\">Schema</th>\n<th style=\"text-align: left;\">What it stores</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\"><strong>Bronze</strong></td>\n<td style=\"text-align: left;\"><code>bronze</code></td>\n<td style=\"text-align: left;\">Raw extracts, as received, plus load metadata</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Silver</strong></td>\n<td style=\"text-align: left;\"><code>silver</code></td>\n<td style=\"text-align: left;\">Clean, standardized, validated, enriched tables</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Gold</strong></td>\n<td style=\"text-align: left;\"><code>gold</code></td>\n<td style=\"text-align: left;\">Business-ready aggregates and KPIs (Key Performance Indicators)</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Quarantine</strong></td>\n<td style=\"text-align: left;\"><code>quarantine</code></td>\n<td style=\"text-align: left;\">Rows that failed Silver quality checks</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">Run the notebooks <strong>in order</strong>, then repeat 01\u201303 when you change <code>run_date</code>:</span>\n<ol>\n<li><code>00_setup.py</code> \u2014 once (recreating the lakehouse)</li>\n<li><code>01_bronze.py</code> \u2014 ingest <code>data/&lt;run_date&gt;/</code></li>\n<li><code>02_silver.py</code> \u2014 clean and validate</li>\n<li><code>03_gold.py</code> \u2014 build KPIs</li>\n</ol>\n<span class=\"paragraph\">Valid processing dates: <code>2026-09-17</code> (first load), <code>2026-09-18</code>, <code>2026-09-19</code>, <code>2026-09-20</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "7ea2a453f0c6acee95ebfcd75a6d7fdd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"duckdb-vs-ducklake\">DuckDB vs DuckLake</h2>\n<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\"></th>\n<th style=\"text-align: left;\"><strong>DuckDB</strong></th>\n<th style=\"text-align: left;\"><strong>DuckLake</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">Role</td>\n<td style=\"text-align: left;\">SQL engine (parse, plan, compute)</td>\n<td style=\"text-align: left;\">Lakehouse storage layer</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\">This session</td>\n<td style=\"text-align: left;\">In-memory compute</td>\n<td style=\"text-align: left;\">Catalog + Parquet files on disk</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\">Persistence</td>\n<td style=\"text-align: left;\">Lost when the notebook stops</td>\n<td style=\"text-align: left;\">Kept in <code>lakehouse/</code></td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\"><strong>DuckLake features used in this series</strong></span>\n<ul>\n<li><code>ATTACH ... (TYPE DUCKLAKE, DATA_PATH ...)</code> \u2014 create/open the catalog</li>\n<li><code>CREATE SCHEMA</code> \u2014 Bronze / Silver / Gold / Quarantine</li>\n<li>ACID <code>BEGIN</code> / <code>COMMIT</code> with <code>set_commit_message</code></li>\n<li>Snapshots via <code>ducklake_snapshots('sales_lake')</code></li>\n</ul>\n<span class=\"paragraph\"><strong>DuckDB features</strong> (compute, not storage): <code>read_csv</code>, <code>try_cast</code>, <code>MERGE INTO</code> for incremental Silver loads, and data cleaning using SQL.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "b8e6e2bc66c3509b481ca11832ed09f2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "df3a4732b3b4b3f533ad8832190348cf",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"1-reset-the-local-lakehouse\">1. Reset the local lakehouse</h2>\n<span class=\"paragraph\">The next cell <strong>deletes</strong> <code>lakehouse/</code> so this notebook always starts from an empty catalog.</span>\n<span class=\"paragraph\">Re-run <code>00_setup.py</code> only when you want a fresh pipeline. It will remove previous Bronze, Silver, and Gold tables.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "46b86038807e1c9a765be63b582bcec8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Fresh lakehouse created at c:\\_cmps360-content\\examples\\03_dt\\01_meddalion_ducklake\\lakehouse\nCatalog (DuckLake metadata): c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/lakehouse/sales_lake_catalog.db\nData path (Parquet files):     c:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/lakehouse/sales_lake_data\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "PKri",
+      "code_hash": "9caafb049f2d48b84802a3969374c2f7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-attach-ducklake-as-sales_lake\">2. Attach DuckLake as <code>sales_lake</code></h2>\n<span class=\"paragraph\"><code>INSTALL</code> &amp; <code>LOAD</code> <strong>DuckLake</strong> extension, then <code>ATTACH</code> a catalog file and a data folder.</span>\n<ul>\n<li>Metadata (schemas, tables, snapshots) \u2192 <code>sales_lake_catalog.db</code></li>\n<li>Table files (Parquet) \u2192 <code>sales_lake_data/</code></li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "28790e385f99e738a3406449ae40bdfc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Xref-0' random-id='98dffa86-f478-7c1a-8103-8bc3ecf00167'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;},{&#92;&quot;database_name&#92;&quot;:&#92;&quot;sales_lake&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "0b9cf2b65005defcc6f31ff1becb0e4d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-create-medallion-schemas\">3. Create Medallion schemas</h2>\n<span class=\"paragraph\"><code>CREATE SCHEMA</code> <strong>in DuckLake</strong>, not in the temporary memory database.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "0b563f6f0ba939b9972537726b84d09f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "9180e02e03578bd82eab3a26ba5a0879",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-validate-the-catalog\">4. Validate the catalog</h2>\n<span class=\"paragraph\">Expected: schemas <code>bronze</code>, <code>silver</code>, <code>gold</code>, <code>quarantine</code>, and <code>main</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "ad1ce6400989b852fb12d94bf889583a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Kclp-0' random-id='e55b135f-0501-9223-4006-a44a25264f5d'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;bronze&#92;&quot;},{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;gold&#92;&quot;},{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;main&#92;&quot;},{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;quarantine&#92;&quot;},{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;silver&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;schema_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "c86ce088621465852701bfb1dc89959d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='emfo-0' random-id='2a704019-c225-0c81-42ef-70f27e5177f0'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;snapshot_id&#92;&quot;:0,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-20 12:35:10.729468+03&#92;&quot;,&#92;&quot;author&#92;&quot;:null,&#92;&quot;commit_message&#92;&quot;:null},{&#92;&quot;snapshot_id&#92;&quot;:1,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-20 12:35:11.017396+03&#92;&quot;,&#92;&quot;author&#92;&quot;:&#92;&quot;admin&#92;&quot;,&#92;&quot;commit_message&#92;&quot;:&#92;&quot;Create bronze, silver, gold, and quarantine schemas&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;snapshot_id&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;snapshot_time&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;author&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;commit_message&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "9aebf106e94a9e005b3b8182220c9b4e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h4 id=\"5-releasing-the-lakehouse-catalog-with-detach-database-ensures-all-file-handles-are-closed-and-the-catalog-can-safely-be-used-in-another-notebook\">5. Releasing the lakehouse catalog with DETACH DATABASE ensures all file handles are closed and the catalog can safely be used in another notebook.</h4></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "0f24e698d7c2c5025997d44b47d8a64f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nWHF-0' random-id='30a7e8de-03b2-1ab3-1783-72df594e50d7'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='1' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "3082a9218a206a5df0ad2fc50ebb8989",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"what-to-do-next\">What to do next</h3>\n<span class=\"paragraph\">Open <code>01_bronze.py</code> and set:</span>\n<div class=\"language-python codehilite\"><pre><span></span><code><span class=\"n\">run_date</span> <span class=\"o\">=</span> <span class=\"s2\">\"2026-09-17\"</span>\n</code></pre></div>\n<span class=\"paragraph\">Use the same <code>run_date</code> in <code>02_silver.py</code> and <code>03_gold.py</code>. After a successful full run for 17 Sep, change it to <code>2026-09-18</code> and re-run 01\u201303 to practice incremental loads.</span>\n<span class=\"paragraph\">Do <strong>not</strong> re-run this setup notebook between those dates, or you will wipe Bronze history.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "cc3e8a7102c49a4f13c98757b6ae1cda",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"summary\">Summary</h2>\n<ul>\n<li>Created a DuckLake catalog named <code>sales_lake</code>.</li>\n<li>Separated metadata (<code>sales_lake_catalog.db</code>) from Parquet data (<code>sales_lake_data/</code>).</li>\n<li>Added four schemas that match the Medallion layers plus quarantine.</li>\n<li>Recorded a commit message on the schema-creation snapshot.</li>\n</ul>\n<span class=\"paragraph\"><strong>Learned:</strong> DuckDB runs the SQL; DuckLake stores the lakehouse. Schemas are the folders of the catalog. The next notebook loads raw files into <code>bronze</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

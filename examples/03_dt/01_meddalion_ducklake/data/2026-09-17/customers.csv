@@ -1,0 +1,17 @@
+customer_id,customer_name,email,city,country,updated_date
+1,  ali hassan  ,Ali@Example.COM,Doha,Qatar,2026-09-17 10:00:00
+2,SARA AHMED,,Al Rayyan,QA,2026-09-17 11:00:00
+2,Sara Ahmed,sara@example.com,Al Rayyan,QAT,2026-09-17 12:00:00
+3,Omar Saleh,omar@example.com,Al Wakrah,qatar,2026-09-17 09:00:00
+4,Fatima Al-Thani,fatima.althani@example.com, Lusail ,Qatar,2026-09-17 15:30:00
+5,mohammed khalid,mohammed.k@example.com,doha,QAT,2026-09-17 08:45:00
+6,Noor Abdullah,noor.abdullah@example.com,Al Khor,Qatar,2026-09-17 11:20:00
+7,Hassan Ibrahim,hassan.ibrahim@example.com,Umm Salal,QA,2026-09-17 14:10:00
+8, Layla Mahmoud ,layla.mahmoud@example.com,Al Daayen,Qatar,2026-09-17 09:05:00
+9,Youssef Nasser,youssef.nasser@example.com,Dubai,United Arab Emirates,2026-09-17 16:40:00
+10,Amina Farid,amina.farid@example.com,Doha,,2026-09-17 10:25:00
+11,Khalid Rahman,khalid.rahman,Al-Wakrah,qatar,2026-09-17 13:50:00
+12,Huda Salem,huda.salem@example.com,Al Rayyan,QATAR,2026-09-17 07:30:00
+13,Tariq Mansour,tariq.mansour@example.com,Riyadh,Saudi Arabia,2026-09-17 12:05:00
+14,Mariam Qasim,mariam.qasim@example.com,Lusail,Qatar,2026-09-17 18:15:00
+15,Saeed Al-Kuwari,saeed.alkuwari@example.com,Dohaa,Qa,2026-09-17 09:55:00

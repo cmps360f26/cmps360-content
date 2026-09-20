@@ -1,0 +1,224 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "7a192230617cf8e9f56737243e901963",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"acid-transaction-with-a-bank-transfer\">ACID Transaction with a Bank Transfer</h1>\n<span class=\"paragraph\">This notebook demonstrates <strong>Atomicity, Consistency, Isolation, and Durability (ACID)</strong> using a transfer of 200 between a Savings and a Current account in DuckDB.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "3c41088887e3044ab3d595a68bbd32ff",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"1-create-the-accounts-table-and-insert-test-data\">1. Create the accounts table and insert test data</h2>\n<span class=\"paragraph\">The account balance starts at 1500: 1000 in Savings and 500 in Current.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "46fe14f7d9eed5f35582d8315c531f06",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "eba357220e59c6e9ce336b1d662375be",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lEQa-0' random-id='bd11467f-394d-14a9-a8f6-6f6b5af73bea'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Savings&#92;&quot;,&#92;&quot;balance&#92;&quot;:1000.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Current&#92;&quot;,&#92;&quot;balance&#92;&quot;:500.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Total&#92;&quot;,&#92;&quot;balance&#92;&quot;:1500.0}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;account_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;balance&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "cbeddda219e81ab83425171c9fcf4d09",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-transfer-without-a-transaction-an-exception-leaves-the-database-inconsistent\">2. Transfer without a transaction: an exception leaves the database inconsistent</h2>\n<span class=\"paragraph\">Doing the transfer <strong>without</strong> wrapping the two updates in a transaction. Outside an explicit transaction, DuckDB commits each statement as soon as it succeeds.</span>\n<span class=\"paragraph\">The withdrawal from Savings commits immediately. The deposit into Current then fails (nonexistent column), so the money never arrives - it simply disappears. This leaves the database inconsistent.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "dfe48d97188ae8d5567ae340a110b911",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "sql-error",
+          "evalue": "Binder Error: Referenced column \"invalid_column\" not found in FROM clause!\nCandidate bindings: \"account_id\", \"balance\"",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "eba357220e59c6e9ce336b1d662375be",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='SFPL-0' random-id='004ccea5-f801-6b74-edd2-e6eb61018f8b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Savings&#92;&quot;,&#92;&quot;balance&#92;&quot;:800.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Current&#92;&quot;,&#92;&quot;balance&#92;&quot;:500.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Total&#92;&quot;,&#92;&quot;balance&#92;&quot;:1300.0}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;account_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;balance&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "1a548bd47fe33d6036f0588eec2f15be",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><ul>\n<li>Real-world effect: the customer balance dropped from 1500 to 1300.</li>\n<li>\ud83d\ude22 Customer: I moved 200 into my Current account, but it just vanished!'</li>\n<li>\ud83d\ude00 Bank: now owes the customer 200. An unearned gain caused by the missing update.' AS message;</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "3366d56a0e54d9f08bf2e3125de14127",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-reset-the-test-data\">3. Reset the test data</h2>\n<span class=\"paragraph\">Restore the original balances before demonstrating an explicit transaction.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "0d6127a9045dbfef222e37dca402c385",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "eba357220e59c6e9ce336b1d662375be",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='emfo-0' random-id='e98a4131-1f0c-f958-e45f-0b2171b25d4e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Savings&#92;&quot;,&#92;&quot;balance&#92;&quot;:1000.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Current&#92;&quot;,&#92;&quot;balance&#92;&quot;:500.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Total&#92;&quot;,&#92;&quot;balance&#92;&quot;:1500.0}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;account_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;balance&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "c2c93759c5bda1d19c92346ee80ddea4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-transfer-with-a-transaction\">4. Transfer with a transaction</h2>\n<span class=\"paragraph\">The withdrawal and deposit are executed inside one transaction. The explicit <code>ROLLBACK</code> demonstrates atomicity: neither change remains committed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "626ecf2a-69f0-4020-b246-3aa33b70d22e",
+      "code_hash": "3d26985a1bc3455288cbd373770eac72",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "\ud83e\udd26Transaction failed, rolled back \u21a9\ufe0f: Binder Error: Referenced column \"invalid_column\" not found in FROM clause!\nCandidate bindings: \"account_id\", \"balance\"\n\nLINE 4:         WHERE account_id = 2 AND invalid_column = 1;\n                                         ^\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "iLit",
+      "code_hash": "76525fb15bc4ab1e5d7114d444f43596",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='iLit-0' random-id='a61df374-0c86-c9c1-fb4d-772ff6111782'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Savings&#92;&quot;,&#92;&quot;balance&#92;&quot;:1000.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Current&#92;&quot;,&#92;&quot;balance&#92;&quot;:500.0},{&#92;&quot;account_type&#92;&quot;:&#92;&quot;Total&#92;&quot;,&#92;&quot;balance&#92;&quot;:1500.0}]&quot;' data-total-rows='3' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;account_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;balance&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "17c48a25b0d035cd560eb19d7186c6e3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"acid-properties-illustrated\">ACID properties illustrated</h2>\n<ul>\n<li><strong>Atomicity:</strong> All-or-nothing. The withdrawal and deposit are treated as a single unit, so a mid-way failure prevents a partial update - <code>ROLLBACK</code> undoes both, leaving no half-finished transfer.</li>\n<li><strong>Consistency:</strong> The account total remains 1500</li>\n<li><strong>Isolation:</strong> Uncommitted changes are hidden from other transactions.</li>\n<li><strong>Durability:</strong> Committed changes persist after the transaction completes.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

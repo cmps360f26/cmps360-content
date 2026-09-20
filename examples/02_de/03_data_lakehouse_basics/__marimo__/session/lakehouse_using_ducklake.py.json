@@ -1,0 +1,511 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "MJUe",
+      "code_hash": "11f4bcb22afb275a2dfadc325a85c2fe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"lakehouse-storage-layer-with-ducklake-duckdb-catalog\">\ud83c\udff0 Lakehouse Storage Layer with DuckLake &amp; DuckDB Catalog</h1>\n<span class=\"paragraph\">This notebook provides a hands-on guide to <strong>DuckLake</strong> as a modern Lakehouse storage layer using <strong>DuckDB</strong> for both compute engine and metadata catalog.</span>\n<hr />\n<h2 id=\"objectives-core-capabilities\">\ud83c\udfaf Objectives &amp; Core Capabilities</h2>\n<ul>\n<li><strong>Lakehouse Catalog (<code>hr_lake</code>) &amp; Decoupled Storage</strong>: Store metadata in <code>lakehouse/hr_lake_catalog.db</code> and raw data files as Parquet in <code>lakehouse/hr_lake_data/</code>.</li>\n<li><strong>Transactions (ACID Atomicity &amp; Consistency)</strong>: Execute multi-statement writes safely with atomic commits and rollbacks. Each commit can record an author and a <code>set_commit_message(...)</code> note in the snapshot log.\nYou can view the parquet files using many tools such as <a href=\"https://github.com/mukunku/ParquetViewer/\" rel=\"noopener noreferrer\" target=\"_blank\">https://github.com/mukunku/ParquetViewer/</a></li>\n<li><strong>Time Travel</strong>: Query past versions and historical snapshots of tables without restoring backups.</li>\n<li><strong>Schema Evolution</strong>: Modify table structures in-place (e.g., adding a performance rating column or renaming <code>salary</code> to <code>monthly_salary</code>) without rewriting existing Parquet data files.</li>\n</ul>\n<hr />\n<h2 id=\"duckdb-engine-vs-ducklake-storage-layer\">\ud83d\udccc DuckDB Engine vs. DuckLake Storage Layer</h2>\n<ul>\n<li><strong>DuckDB Engine</strong>: An in-process analytical SQL query engine responsible for parsing SQL, planning execution, and processing data in memory.</li>\n<li><strong>DuckLake Storage Layer (<code>hr_lake</code>)</strong>: An open Lakehouse storage specification and extension for DuckDB that manages metadata catalogs, ACID transactions, and decoupled Parquet data storage.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "1f10486b2350161a1efde1693f385ec1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">DuckDB is the only runtime dependency required by this notebook. Install it once in the selected Python environment if needed:</span>\n<span class=\"paragraph\"><code>pip install duckdb</code></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "7e719d7290b3295d1f2721127903af34",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"section-1-install-ducklake-extension-duckdb-catalog-configuration\">Section 1: Install DuckLake Extension &amp; DuckDB Catalog Configuration</h3>\n<ul>\n<li><strong>Extension Required</strong>: <code>ducklake</code> (installed and loaded by the SQL cells below).</li>\n<li><strong>Catalog</strong>: <code>lakehouse/hr_lake_catalog.db</code> stores table schemas, snapshots, transactions, and file tracking.</li>\n<li><strong>Data Path</strong>: <code>lakehouse/hr_lake_data/</code> stores the physical Parquet data files.</li>\n<li>DuckLake persists the catalog and Parquet data on disk.</li>\n<li><strong>Path Handling</strong>: Absolute paths are used so output location does not depend on the current working directory.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hbol",
+      "code_hash": "b8e6e2bc66c3509b481ca11832ed09f2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "3b8b78579e24b50dbcd4b2730e84063c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Fresh lakehouse created at c:\\_cmps360-content\\examples\\02_de\\03_data_lakehouse_basics\\lakehouse\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "f46ce474-849d-479e-976c-4a0a457172d7",
+      "code_hash": "6d9a429b5c6b0481d01c48dcb648fe14",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"12-attach-ducklake-as-the-hr_lake-catalog\">1.2 Attach DuckLake as the <code>hr_lake</code> catalog</h3>\n<span class=\"paragraph\">This SQL cell loads the DuckLake extension and mounts the lakehouse so later queries run against it.</span>\n<ul>\n<li><strong><code>INSTALL ducklake</code> / <code>LOAD ducklake</code></strong>: Download (once) and enable the DuckLake extension in this DuckDB session.</li>\n<li><strong><code>ATTACH ... AS hr_lake (TYPE DUCKLAKE, DATA_PATH ...)</code></strong>: Register a DuckLake catalog named <code>hr_lake</code>. Metadata (schemas, snapshots, transactions, file tracking) is stored in <code>hr_lake_catalog.db</code>. Physical table data is stored as Parquet files under <code>hr_lake_data/</code>.</li>\n<li><strong><code>USE hr_lake</code></strong>: Make <code>hr_lake</code> the default database so <code>CREATE TABLE employees</code> and later SQL refer to the lakehouse without a catalog prefix.</li>\n</ul>\n<span class=\"paragraph\">DuckDB itself stays in memory. DuckLake is what persists the catalog and Parquet files on disk.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "4bbcd7358c1f545cbf3b360b89ad4c83",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='PKri-0' random-id='c69a1f17-fad5-915b-8587-3b4a9909d64f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;hr_lake&#92;&quot;},{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6ba782a88d98f16e7887fb1eec9e2b36",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">DuckLake catalog attached as <code>hr_lake</code>. The storage layer is ready.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "a573d1565a0c6d076506a3239dc46393",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"13-create-the-employee-table-in-ducklake-and-add-a-few-rows\">1.3 Create the employee table in DuckLake and add a few rows</h3>\n<span class=\"paragraph\">Optional - Call <code>hr_lake.set_commit_message(author, message)</code> <strong>inside the open transaction, before <code>COMMIT</code></strong>. DuckLake stores that author and message on the snapshot, which you will query later with <code>ducklake_snapshots('hr_lake')</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "814b6c2d4df86bc739cb582341065db1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "e7b71f56611e599d802e13c4ea163084",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "762ff7b57a062917c4bc5d421f797bd4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Kclp-0' random-id='ca2f9e5b-26d0-8696-3923-6b8961bb3c5f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:32000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000}]&quot;' data-total-rows='2' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "97fc1893635390c608256bae4199cc72",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-2-transactions-acid-multi-statement-writes\">\ud83d\udd04 Section 2: Transactions (ACID Multi-Statement Writes)</h2>\n<h3 id=\"concept-explanation\">Concept Explanation</h3>\n<ul>\n<li><strong>Atomicity</strong>: All SQL statements inside <code>BEGIN TRANSACTION</code> commit together or roll back cleanly if an error occurs.</li>\n<li><strong>Consistency</strong>: Protects the catalog and storage layer against partial updates, ensuring incomplete writes never become visible.</li>\n</ul>\n<h3 id=\"realistic-demonstration-scenarios\">Realistic Demonstration Scenarios</h3>\n<ol>\n<li><strong>Successful Transaction (<code>COMMIT</code>)</strong>: Increase salary of Tariq Al-Ali and inserts a new employee, Omar Al-Farooq.</li>\n<li><strong>Failed Transaction (<code>ROLLBACK</code>)</strong>: Simulates a realistic payroll calculation error (division by zero during a batch bonus calculation). The exception triggers <code>ROLLBACK</code>, leaving the dataset completely unchanged.</li>\n</ol></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "9440fc9b5dd65f04e260191e0dd8e3b4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"21-group-a-salary-update-and-an-employee-insert-into-one-commit\">2.1. Group a salary update and an employee insert into one commit</h3>\n<span class=\"paragraph\">Both changes become visible together, which demonstrates atomicity. The <code>set_commit_message</code> call tags that snapshot with an author and a short description.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "4ab5bfc8042a7b939868d69c8518363c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nHfw",
+      "code_hash": "762ff7b57a062917c4bc5d421f797bd4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nHfw-0' random-id='c0429cb2-8182-b0bf-6e9d-2e6acb658fce'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:35000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000},{&#92;&quot;id&#92;&quot;:3,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Omar&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Farooq&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:28000}]&quot;' data-total-rows='3' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "b9b3126341d276532903aad6c39f58c3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"22-force-an-error-after-a-salary-update-and-roll-back-the-whole-transaction\">2.2. Force an error after a salary update and roll back the whole transaction</h3>\n<span class=\"paragraph\">The update to Tariq must be rolled back due to the failed bonus calculation.</span>\n<span class=\"paragraph\">DuckDB SQL has no <code>try</code>/<code>except</code> support. If one statement fails, execution stops with no way to catch the error and run <code>ROLLBACK</code> afterward. The next cell uses Python exception handling for that cleanup.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "0999150e7249ba0cb6ad9351e305ca4a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Expected payroll error; transaction rolled back: Conversion Error: Type DOUBLE with value inf can't be cast because the value is out of range for the destination type INT32\n\nLINE 2:         UPDATE employees SET salary = salary + (10000 / 0) WHERE department = 'Engineering';\n                                                     ^\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "762ff7b57a062917c4bc5d421f797bd4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ecfG-0' random-id='689562bd-2dd1-1ee3-01e9-0da1baa25636'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:35000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000},{&#92;&quot;id&#92;&quot;:3,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Omar&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Farooq&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:28000}]&quot;' data-total-rows='3' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "31930aefb9789875d0ee021e94bcc322",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-3-time-travel-querying-historical-snapshots\">\u23f1\ufe0f Section 3: Time Travel (Querying Historical Snapshots)</h2>\n<h3 id=\"concept-explanation\">Concept Explanation</h3>\n<ul>\n<li><strong>Snapshot Ledger</strong>: DuckLake tracks immutable snapshot IDs in <code>hr_lake_catalog.db</code> whenever a transaction commits.</li>\n<li><strong>Time Travel Queries</strong>: Query previous versions of a table using <code>AT (VERSION =&gt; n)</code> without making file copies or restoring database backups.</li>\n</ul>\n<h3 id=\"demonstration-steps\">Demonstration Steps</h3>\n<ol>\n<li>Inspect the snapshot log using <code>ducklake_snapshots('hr_lake')</code>. Each successful write that called <code>set_commit_message</code> shows an author and a commit message.</li>\n<li>Query <strong>VERSION 2</strong> (the initial state containing Tariq &amp; Fatima before Omar was added).</li>\n<li>Compare with the current version.</li>\n</ol></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "5a1c0ce8b9919fe1dca3597555ec4bc9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Vxnm-0' random-id='9a32cf5a-823d-2946-f8ed-6164e59a120e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;snapshot_id&#92;&quot;:0,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-19 20:33:12.006385+03&#92;&quot;,&#92;&quot;author&#92;&quot;:null,&#92;&quot;commit_message&#92;&quot;:null},{&#92;&quot;snapshot_id&#92;&quot;:1,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-19 20:33:12.548397+03&#92;&quot;,&#92;&quot;author&#92;&quot;:&#92;&quot;admin&#92;&quot;,&#92;&quot;commit_message&#92;&quot;:&#92;&quot;employees table created&#92;&quot;},{&#92;&quot;snapshot_id&#92;&quot;:2,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-19 20:33:12.635592+03&#92;&quot;,&#92;&quot;author&#92;&quot;:&#92;&quot;admin&#92;&quot;,&#92;&quot;commit_message&#92;&quot;:&#92;&quot;2 new employees added&#92;&quot;},{&#92;&quot;snapshot_id&#92;&quot;:3,&#92;&quot;snapshot_time&#92;&quot;:&#92;&quot;2026-09-19 20:33:12.682698+03&#92;&quot;,&#92;&quot;author&#92;&quot;:&#92;&quot;admin&#92;&quot;,&#92;&quot;commit_message&#92;&quot;:&#92;&quot;Raise Tariq salary and add Omar Al-Farooq&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;snapshot_id&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;snapshot_time&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;author&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;commit_message&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "24265bfa02840034200d115e88779d1b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"step-3b-read-the-version-before-omar-was-added-then-read-the-current-table\">Step 3B: Read the version before Omar was added, then read the current table</h3>\n<span class=\"paragraph\">The historical query is read-only; it does not restore or modify the table.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "2c98abf5ec18fa12e2f368fb341af2ca",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ulZA-0' random-id='d8b1fae1-2e7b-2d5e-9814-dfeeba8ca700'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:32000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000}]&quot;' data-total-rows='2' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "c611d563-6253-4fae-97ff-e55641f674df",
+      "code_hash": "c3b1b23fb001ac0cce664b020ac6c632",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='c611d563-6253-4fae-97ff-e55641f674df-0' random-id='0ed377ff-7022-7b8c-54be-401932493375'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:32000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000}]&quot;' data-total-rows='2' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "762ff7b57a062917c4bc5d421f797bd4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='qnkX-0' random-id='693090a6-311d-5b14-509c-cf46892a2515'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:35000},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;salary&#92;&quot;:24000},{&#92;&quot;id&#92;&quot;:3,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Omar&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Farooq&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;salary&#92;&quot;:28000}]&quot;' data-total-rows='3' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pvdt",
+      "code_hash": "cb751b40a9d5ec3ea37627fb10f2ebc7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-4-zero-copy-schema-evolution\">\ud83e\uddec Section 4: Zero-Copy Schema Evolution</h2>\n<h3 id=\"concept-explanation\">Concept Explanation</h3>\n<ul>\n<li><strong>In-Place Metadata Updates</strong>: Adding a column (<code>ALTER TABLE ... ADD COLUMN</code>) or renaming a column (<code>ALTER TABLE ... RENAME COLUMN</code>) updates the catalog schema in <code>hr_lake_catalog.db</code> without rewriting existing raw Parquet data files in <code>hr_lake_data/</code>.</li>\n<li><strong>Backward Compatibility</strong>: Existing records automatically display <code>NULL</code> / <code>NaN</code> for newly added columns until updated.</li>\n</ul>\n<h3 id=\"demonstration-steps\">Demonstration Steps</h3>\n<ol>\n<li>Add <code>performance_rating DOUBLE</code> column.</li>\n<li>Rename <code>salary</code> to <code>monthly_salary</code>.</li>\n<li>Insert a new record (<code>Layla Mahmoud</code>) containing all 6 columns.</li>\n<li>Inspect the evolved table structure.</li>\n</ol></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZBYS",
+      "code_hash": "8fa8b07281201936acac8de610869c6b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aLJB",
+      "code_hash": "ded38a7be1e0f2fb8da724131540b5c5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "762ff7b57a062917c4bc5d421f797bd4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='iLit-0' random-id='6933e589-4683-5821-8c9a-96a11988d97a'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;id&#92;&quot;:1,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Tariq&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Ali&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;monthly_salary&#92;&quot;:35000,&#92;&quot;performance_rating&#92;&quot;:null},{&#92;&quot;id&#92;&quot;:2,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Fatima&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Zahra&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Marketing&#92;&quot;,&#92;&quot;monthly_salary&#92;&quot;:24000,&#92;&quot;performance_rating&#92;&quot;:null},{&#92;&quot;id&#92;&quot;:3,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Omar&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Al-Farooq&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;Engineering&#92;&quot;,&#92;&quot;monthly_salary&#92;&quot;:28000,&#92;&quot;performance_rating&#92;&quot;:null},{&#92;&quot;id&#92;&quot;:4,&#92;&quot;first_name&#92;&quot;:&#92;&quot;Layla&#92;&quot;,&#92;&quot;last_name&#92;&quot;:&#92;&quot;Mahmoud&#92;&quot;,&#92;&quot;department&#92;&quot;:&#92;&quot;HR&#92;&quot;,&#92;&quot;monthly_salary&#92;&quot;:30000,&#92;&quot;performance_rating&#92;&quot;:4.9}]&quot;' data-total-rows='4' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;id&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;first_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;last_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;department&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;monthly_salary&quot;,[&quot;integer&quot;,&quot;i32&quot;]],[&quot;performance_rating&quot;,[&quot;number&quot;,&quot;f64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "3ebffee600b70acd09195e81f127ea6f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-5-verification-local-workspace-structure\">\ud83d\udcc1 Section 5: Verification &amp; Local Workspace Structure</h2>\n<span class=\"paragraph\">Inspect your workspace directory structure after running this notebook to observe the decoupled storage design:</span>\n<ul>\n<li><strong><code>lakehouse/hr_lake_catalog.db</code></strong>: The DuckDB relational catalog database managing table schemas, active snapshots, transactions, and file tracking.</li>\n<li><strong><code>lakehouse/hr_lake_data/</code></strong>: A folder containing raw, queryable,  <strong>Parquet files</strong>.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "AjVT",
+      "code_hash": "5fc0e2e39c762f51060685a68308a57b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='AjVT-0' random-id='54c2ec17-c730-166b-89f8-3d1112d374f9'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;schema_name&#92;&quot;:&#92;&quot;main&#92;&quot;,&#92;&quot;table_name&#92;&quot;:&#92;&quot;employees&#92;&quot;,&#92;&quot;rows_flushed&#92;&quot;:&#92;&quot;5&#92;&quot;}]&quot;' data-total-rows='1' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;schema_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;table_name&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;rows_flushed&quot;,[&quot;number&quot;,&quot;decimal[38,0]&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "pHFh",
+      "code_hash": "a0f76d77d4fe9e754e8a3e4909918fdb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='pHFh-0' random-id='26d8a0b8-51e2-33f1-c7e9-94fbe6d4609f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;data_file&#92;&quot;:&#92;&quot;c:&#92;&#92;&#92;&#92;_cmps360-content&#92;&#92;&#92;&#92;examples&#92;&#92;&#92;&#92;02_de&#92;&#92;&#92;&#92;03_data_lakehouse_basics&#92;&#92;&#92;&#92;lakehouse&#92;&#92;&#92;&#92;hr_lake_data&#92;&#92;&#92;&#92;main&#92;&#92;&#92;&#92;employees&#92;&#92;&#92;&#92;ducklake-01a0baba-b3f5-7ad0-83c8-346f72a351f4.parquet&#92;&quot;,&#92;&quot;data_file_size_bytes&#92;&quot;:1175,&#92;&quot;data_file_footer_size&#92;&quot;:828,&#92;&quot;data_file_encryption_key&#92;&quot;:null,&#92;&quot;delete_file&#92;&quot;:&#92;&quot;c:&#92;&#92;&#92;&#92;_cmps360-content&#92;&#92;&#92;&#92;examples&#92;&#92;&#92;&#92;02_de&#92;&#92;&#92;&#92;03_data_lakehouse_basics&#92;&#92;&#92;&#92;lakehouse&#92;&#92;&#92;&#92;hr_lake_data&#92;&#92;&#92;&#92;main&#92;&#92;&#92;&#92;employees&#92;&#92;&#92;&#92;ducklake-01a0baba-b401-7d6b-ad10-0ad23c09ec25-delete.parquet&#92;&quot;,&#92;&quot;delete_file_size_bytes&#92;&quot;:1266,&#92;&quot;delete_file_footer_size&#92;&quot;:1011,&#92;&quot;delete_file_encryption_key&#92;&quot;:null},{&#92;&quot;data_file&#92;&quot;:&#92;&quot;c:&#92;&#92;&#92;&#92;_cmps360-content&#92;&#92;&#92;&#92;examples&#92;&#92;&#92;&#92;02_de&#92;&#92;&#92;&#92;03_data_lakehouse_basics&#92;&#92;&#92;&#92;lakehouse&#92;&#92;&#92;&#92;hr_lake_data&#92;&#92;&#92;&#92;main&#92;&#92;&#92;&#92;employees&#92;&#92;&#92;&#92;ducklake-01a0baba-b3fa-7b64-8b32-45503de38538.parquet&#92;&quot;,&#92;&quot;data_file_size_bytes&#92;&quot;:1196,&#92;&quot;data_file_footer_size&#92;&quot;:926,&#92;&quot;data_file_encryption_key&#92;&quot;:null,&#92;&quot;delete_file&#92;&quot;:null,&#92;&quot;delete_file_size_bytes&#92;&quot;:null,&#92;&quot;delete_file_footer_size&#92;&quot;:null,&#92;&quot;delete_file_encryption_key&#92;&quot;:null}]&quot;' data-total-rows='2' data-total-columns='8' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;data_file&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;data_file_size_bytes&quot;,[&quot;integer&quot;,&quot;u64&quot;]],[&quot;data_file_footer_size&quot;,[&quot;integer&quot;,&quot;u64&quot;]],[&quot;data_file_encryption_key&quot;,[&quot;unknown&quot;,&quot;binary&quot;]],[&quot;delete_file&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;delete_file_size_bytes&quot;,[&quot;integer&quot;,&quot;u64&quot;]],[&quot;delete_file_footer_size&quot;,[&quot;integer&quot;,&quot;u64&quot;]],[&quot;delete_file_encryption_key&quot;,[&quot;unknown&quot;,&quot;binary&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "\nthread '<unnamed>' (15844) panicked at crates\\polars-json\\src\\json\\write\\serialize.rs:634:18:\nnot yet implemented: Writing BinaryView to JSON\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "aqbW",
+      "code_hash": "3434e86b5304cb0a5f5ed7ec58505611",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-6-duckdb-engine-vs-ducklake-storage-layer-summary\">\ud83d\udcca Section 6: DuckDB Engine vs. DuckLake Storage Layer Summary</h2>\n<table>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Feature / Capability</th>\n<th style=\"text-align: left;\">DuckDB Engine</th>\n<th style=\"text-align: left;\">DuckLake Storage Layer (<code>hr_lake</code>)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\"><strong>Primary Role</strong></td>\n<td style=\"text-align: left;\">SQL Parsing, Query Execution, In-Memory Computation</td>\n<td style=\"text-align: left;\">Catalog Ledger, Snapshot History, Parquet Data Layout</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Catalog Database</strong></td>\n<td style=\"text-align: left;\">Default DuckDB system catalog</td>\n<td style=\"text-align: left;\">Dedicated <code>lakehouse/hr_lake_catalog.db</code> metadata database</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Transactions</strong></td>\n<td style=\"text-align: left;\">Session-level in-memory ACID</td>\n<td style=\"text-align: left;\">Multi-file ACID commits logged to catalog ledger</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Time Travel</strong></td>\n<td style=\"text-align: left;\">Not available for standard table structures</td>\n<td style=\"text-align: left;\">Instant historical queries via <code>AT (VERSION =&gt; n)</code></td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Schema Evolution</strong></td>\n<td style=\"text-align: left;\">Session table schema changes</td>\n<td style=\"text-align: left;\">Zero-copy schema evolution without rewriting Parquet files</td>\n</tr>\n<tr>\n<td style=\"text-align: left;\"><strong>Storage Layout</strong></td>\n<td style=\"text-align: left;\">Monolithic local <code>.duckdb</code> file</td>\n<td style=\"text-align: left;\">Decoupled metadata catalog (<code>lakehouse/hr_lake_catalog.db</code>) &amp; folder storage (<code>lakehouse/hr_lake_data/</code>)</td>\n</tr>\n</tbody>\n</table></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TRpd",
+      "code_hash": "32b11a9eec9876ef64d95f1f161c1ddc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-7-key-takeaways-conclusion\">\ud83c\udfc1 Section 7: Key Takeaways &amp; Conclusion</h2>\n<ol>\n<li>** Catalog &amp; Storage Decoupling**: DuckLake separates metadata management (<code>lakehouse/hr_lake_catalog.db</code>) from raw data storage (<code>lakehouse/hr_lake_data/</code>).</li>\n<li><strong>ACID Transactions</strong>: Standard SQL transactions (<code>BEGIN TRANSACTION</code>, <code>COMMIT</code>, <code>ROLLBACK</code>) ensure data integrity and rollback failed transactions. <code>set_commit_message(author, message)</code> records who changed what on each snapshot.</li>\n<li><strong>Time Travel</strong>: Snapshot logs track every commit, allowing instant time-travel queries via <code>AT (VERSION =&gt; n)</code>.</li>\n<li><strong>Zero-Copy Schema Evolution</strong>: Table schemas evolve in-place with <code>ALTER TABLE</code> (<code>ADD COLUMN</code>, <code>RENAME COLUMN</code>) without rewriting existing Parquet files.</li>\n</ol></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TXez",
+      "code_hash": "c6d411648a2fe75b882ca224ef7125fa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"section-8-release-the-catalog-for-duckdb-cli\">\ud83d\udd0c Section 8: Release the Catalog for DuckDB CLI</h2>\n<span class=\"paragraph\">Run the cell first to release the <code>hr_lake</code> catalog, then restart the notebook kernel.</span>\n<span class=\"paragraph\">You can connect the <code>hr_lake</code> from the common line using:\n<div class=\"language-powershell codehilite\"><pre><span></span><code><span class=\"n\">duckdb</span>\n</code></pre></div></span>\n<div class=\"language-sql codehilite\"><pre><span></span><code><span class=\"n\">INSTALL</span><span class=\"w\"> </span><span class=\"n\">ducklake</span><span class=\"p\">;</span>\n<span class=\"k\">LOAD</span><span class=\"w\"> </span><span class=\"n\">ducklake</span><span class=\"p\">;</span>\n\n<span class=\"n\">ATTACH</span><span class=\"w\"> </span><span class=\"s1\">'lakehouse/hr_lake_catalog.db'</span><span class=\"w\"> </span><span class=\"k\">AS</span><span class=\"w\"> </span><span class=\"n\">hr_lake</span><span class=\"w\"> </span><span class=\"p\">(</span>\n<span class=\"w\">    </span><span class=\"k\">TYPE</span><span class=\"w\"> </span><span class=\"n\">DUCKLAKE</span>\n<span class=\"p\">);</span>\n\n<span class=\"k\">SHOW</span><span class=\"w\"> </span><span class=\"n\">DATABASES</span><span class=\"p\">;</span>\n<span class=\"n\">USE</span><span class=\"w\"> </span><span class=\"n\">hr_lake</span><span class=\"p\">;</span>\n<span class=\"k\">SHOW</span><span class=\"w\"> </span><span class=\"n\">TABLES</span><span class=\"p\">;</span>\n<span class=\"k\">SELECT</span><span class=\"w\"> </span><span class=\"o\">*</span><span class=\"w\"> </span><span class=\"k\">FROM</span><span class=\"w\"> </span><span class=\"n\">employees</span><span class=\"p\">;</span>\n</code></pre></div></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "057ca14e-3dbf-4646-b705-f234636b541c",
+      "code_hash": "48ad5b98c8074f9bd546064b033002b4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='057ca14e-3dbf-4646-b705-f234636b541c-0' random-id='44597f0e-c756-740a-3ab5-f7dc62227325'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;hr_lake&#92;&quot;},{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "dNNg",
+      "code_hash": "0d9785b0c72d1608072b41dd1429a1fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='dNNg-0' random-id='85cd64c7-69ec-6d2f-3005-143d74085840'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;database_name&#92;&quot;:&#92;&quot;memory&#92;&quot;}]&quot;' data-total-rows='1' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;database_name&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# ============================================================
+# Data Science Course Environment
+# ============================================================
+
+# Core numerical computing and data manipulation
+numpy>=2.5.3
+pandas>=3.0.6
+scipy>=1.18.1
+
+# Modern DataFrames, columnar data, and analytical SQL
+polars>=1.44.2
+pyarrow>=25.0.1
+duckdb>=1.5.5
+
+# Data visualization
+matplotlib>=3.11.2
+seaborn>=0.13.2
+plotly>=7.1.0
+
+# Machine learning
+scikit-learn>=1.9.1
+
+# Interactive computing
+jupyterlab>=4.6.3
+ipykernel>=7.3.0
+ipywidgets>=8.1.9
+marimo>=0.24.2
+sqlglot>=30.18.0
+pyzmq>=27.2.0
+
+# Data access and common file formats
+requests>=2.34.2
+openpyxl>=3.1.5
+
+# Utilities
+tqdm>=4.70.1

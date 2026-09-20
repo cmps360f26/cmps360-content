@@ -1,0 +1,5 @@
+customer_id,customer_name,email,city,country,updated_date
+2,Sara Ahmed,sara@example.com,Lusail,QAT,2026-09-18 09:10:00
+5,Mohammed Khalid,  mohammed.k@example.com  ,Doha,QAT,2026-09-18 09:12:00
+11,Khalid Rahman,khalid.rahman@example.com,Al Wakrah,Qatar,2026-09-18 10:00:00
+16,Reem Al-Ali,reem.alali@example.com,,Qatar,2026-09-18 11:30:00
