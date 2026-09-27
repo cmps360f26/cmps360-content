@@ -33,7 +33,7 @@ def _():
     import marimo as mo
 
     # Keep this value in sync with 01_bronze.py and 03_gold.py
-    run_date = "2026-09-18"
+    run_date = "2026-09-17"
 
     catalog_db_path = os.path.abspath(
         os.path.join("lakehouse", "sales_lake_catalog.db")
@@ -223,6 +223,20 @@ def _(mo):
 def _(mo, run_date):
     _df = mo.sql(
         f"""
+        SELECT customer_id, COUNT(*) AS duplicate_count
+                FROM bronze.customers
+                WHERE _load_date = DATE '{run_date}'
+                GROUP BY customer_id
+                HAVING COUNT(*) > 1
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, run_date):
+    _df = mo.sql(
+        f"""
         -- List customer_ids that appear more than once (duplicates)
         SELECT customer_id, customer_name, email, updated_date
         FROM bronze.customers
@@ -291,6 +305,27 @@ def _(mo, run_date):
           AND trim(subcategory_code) <> '';
 
         SELECT * FROM memory.stg_category_cleaned ORDER BY subcategory_code, updated_date;
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        SELECT
+
+        ROW_NUMBER() OVER (
+            PARTITION BY subcategory_code
+            ORDER BY updated_date DESC
+        ) AS row_num,
+        subcategory_code,
+        subcategory,
+        category,
+        updated_date
+        FROM memory.stg_category_cleaned;
+
         """
     )
     return
@@ -1065,68 +1100,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 10. Sales detail (ready for Gold)
-
-    One row per valid order line, joined to the customer and order. This table is rebuilt each run from current Silver (Or use MERGE instead of `CREATE OR REPLACE`).
-    """)
-    return
-
-
-@app.cell
-def _(mo, run_date):
-    _df = mo.sql(
-        f"""
-        BEGIN TRANSACTION;
-
-        CREATE OR REPLACE TABLE silver.sales_detail AS
-        SELECT
-            i.order_id,
-            o.order_date,
-            o.status,
-            o.customer_id,
-            c.customer_name,
-            c.city,
-            c.country,
-            i.order_item_id,
-            i.product_id,
-            i.product_name,
-            i.subcategory_code,
-            i.subcategory,
-            i.category,
-            i.quantity,
-            i.unit_price,
-            i.line_total
-        FROM silver.order_items AS i
-        INNER JOIN silver.orders AS o
-            ON i.order_id = o.order_id
-        INNER JOIN silver.customers AS c
-            ON o.customer_id = c.customer_id;
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver sales_detail {run_date}'
-        );
-
-        COMMIT;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM silver.sales_detail ORDER BY order_id, order_item_id;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ### 12. Quality checks
+    ### 10. Quality checks
 
     These counts should be **0**. If one is not zero, Silver still has a problem.
     """)
@@ -1246,11 +1220,7 @@ def _(mo, run_date):
 
         UNION ALL
         -- Quarantined order_items (e.g. invalid product/order/pricing)
-        SELECT 'quarantine.order_items', count(*) FROM quarantine.order_items
-
-        UNION ALL
-        -- Final detail rows published for gold metrics
-        SELECT 'silver.sales_detail', count(*) FROM silver.sales_detail;
+        SELECT 'quarantine.order_items', count(*) FROM quarantine.order_items;
         """
     )
     return
@@ -1288,7 +1258,7 @@ def _(mo):
     - Removed duplicates by keeping the latest record for each business key (`updated_date`).
     - Used `MERGE INTO` to insert new and update existing records.
     - Sent invalid products, orders, and items to the quarantine tables with reasons.
-    - Created and published `silver.sales_detail` for Gold analytics.
+    - Maintained clean, normalized Silver entity tables ready for dimensional modeling in Gold.
 
     **Key takeaway:** Silver enforces data quality and supports incremental updates with MERGE. Quarantine keeps track of rejected records.
 

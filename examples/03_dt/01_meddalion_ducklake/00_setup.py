@@ -23,7 +23,8 @@ def _(mo):
     1. `00_setup.py` — once (recreating the lakehouse)
     2. `01_bronze.py` — ingest `data/<run_date>/`
     3. `02_silver.py` — clean and validate
-    4. `03_gold.py` — build KPIs
+    4. `03_gold.py` — build Star Schema
+    5. `04_answer_questions.py` — analytics & business questions
 
     Valid processing dates: `2026-09-17` (first load), `2026-09-18`, `2026-09-19`, `2026-09-20`.
     """)
@@ -238,7 +239,7 @@ def _(mo):
     run_date = "2026-09-17"
     ```
 
-    Use the same `run_date` in `02_silver.py` and `03_gold.py`. After a successful full run for 17 Sep, change it to `2026-09-18` and re-run 01–03 to practice incremental loads.
+    Use the same `run_date` in `02_silver.py` and `03_gold.py`. After a successful full run for 17 Sep, change it to `2026-09-18` and re-run 01–03 to practice incremental loads, then run `04_answer_questions.py` for analytics.
 
     Do **not** re-run this setup notebook between those dates, or you will wipe Bronze history.
     """)
