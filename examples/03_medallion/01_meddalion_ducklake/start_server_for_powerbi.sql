@@ -8,7 +8,7 @@ INSTALL ducklake;
 LOAD ducklake;
 
 ATTACH
-'ducklake:C:/_cmps360-content/examples/03_dt/01_meddalion_ducklake/lakehouse/sales_lake_catalog.db'
+'ducklake:C:/_cmps360-content/examples/03_medallion/01_meddalion_ducklake/lakehouse/sales_lake_catalog.db'
 AS sales_lake;
 
 INSTALL quack;
