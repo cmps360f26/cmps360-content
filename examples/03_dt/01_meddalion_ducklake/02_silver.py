@@ -43,7 +43,9 @@ def _():
     ).replace("\\", "/")
 
     if not os.path.exists(catalog_db_path):
-        raise FileNotFoundError("DuckLake catalog not found. Run 00_setup.py first.")
+        raise FileNotFoundError(
+            "DuckLake catalog not found. Please run 00_setup.py, 00.1_bronze_schema.py, and 00.2_silver_schema.py first."
+        )
 
     print(f"Building Silver for run_date = {run_date}")
     print(f"Only Bronze rows with _load_date = {run_date} will be processed.")
@@ -91,7 +93,7 @@ def _(mo):
     | Key already exists    | `WHEN MATCHED THEN UPDATE`          | Updating address for customer 2  |
 
     **Important:**
-    - Only create the Silver tables once using `CREATE TABLE IF NOT EXISTS`.
+    - Silver and quarantine tables are initialized in `00.2_silver_schema.py`.
     - Do **not** use `CREATE OR REPLACE` every time. That would erase existing data!
 
     - Temporary scratch tables are made in memory for cleaning and preparing data.
@@ -103,116 +105,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 3. Create typed Silver and Quarantine tables
-
-    Bronze columns are all `VARCHAR`. Silver applies types: integers, decimals, dates.
-
-    `CREATE TABLE IF NOT EXISTS` is safe to re-run. It does not delete existing Silver rows.
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        BEGIN TRANSACTION;
-
-        CREATE TABLE IF NOT EXISTS silver.product_category (
-            subcategory_code VARCHAR,
-            subcategory VARCHAR,
-            category VARCHAR,
-            updated_date TIMESTAMP
-        );
-
-        CREATE TABLE IF NOT EXISTS silver.customers (
-            customer_id INTEGER,
-            customer_name VARCHAR,
-            email VARCHAR,
-            city VARCHAR,
-            country VARCHAR,
-            updated_date TIMESTAMP
-        );
-
-        CREATE TABLE IF NOT EXISTS silver.products (
-            product_id INTEGER,
-            product_name VARCHAR,
-            subcategory_code VARCHAR,
-            subcategory VARCHAR,
-            category VARCHAR,
-            unit_price DECIMAL(10, 2),
-            updated_date TIMESTAMP
-        );
-
-        CREATE TABLE IF NOT EXISTS silver.orders (
-            order_id INTEGER,
-            customer_id INTEGER,
-            order_date DATE,
-            status VARCHAR,
-            updated_date TIMESTAMP
-        );
-
-        CREATE TABLE IF NOT EXISTS silver.order_items (
-            order_item_id INTEGER,
-            order_id INTEGER,
-            product_id INTEGER,
-            product_name VARCHAR,
-            subcategory_code VARCHAR,
-            subcategory VARCHAR,
-            category VARCHAR,
-            quantity INTEGER,
-            unit_price DECIMAL(10, 2),
-            line_total DECIMAL(12, 2),
-            updated_date TIMESTAMP
-        );
-
-        -- Quarantine keeps rejected rows plus a reason and the run_date that rejected them
-        CREATE TABLE IF NOT EXISTS quarantine.products (
-            product_id INTEGER,
-            product_name VARCHAR,
-            subcategory_code VARCHAR,
-            unit_price DECIMAL(10, 2),
-            updated_date TIMESTAMP,
-            rejection_reason VARCHAR,
-            _load_date DATE
-        );
-
-        CREATE TABLE IF NOT EXISTS quarantine.orders (
-            order_id INTEGER,
-            customer_id INTEGER,
-            order_date DATE,
-            status VARCHAR,
-            updated_date TIMESTAMP,
-            rejection_reason VARCHAR,
-            _load_date DATE
-        );
-
-        CREATE TABLE IF NOT EXISTS quarantine.order_items (
-            order_item_id INTEGER,
-            order_id INTEGER,
-            product_id INTEGER,
-            quantity INTEGER,
-            line_unit_price DECIMAL(10, 2),
-            updated_date TIMESTAMP,
-            rejection_reason VARCHAR,
-            _load_date DATE
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Create silver and quarantine tables'
-        );
-
-        COMMIT;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ### 4. Explore Bronze data before cleaning
+    ### 3. Explore Bronze data before cleaning
 
     These queries only look at `_load_date = run_date`.
     """)
@@ -271,7 +164,7 @@ def _(mo, run_date):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 5. Product Category Cleaning and Standardization
+    ### 4. Product Category Cleaning and Standardization
 
     Cleaning rules:
 
@@ -376,11 +269,6 @@ def _(mo, run_date):
             s.subcategory_code, s.subcategory, s.category, s.updated_date
         );
 
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver product_category MERGE {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -400,7 +288,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ###  6. Customers Cleaning and Standardization
+    ### 5. Customers Cleaning and Standardization
 
     Cleaning rules:
 
@@ -509,11 +397,6 @@ def _(mo, run_date):
             s.updated_date
         );
 
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver customers MERGE {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -546,7 +429,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 7. Products Cleaning and Standardization
+    ### 6. Products Cleaning and Standardization
 
     A product is **valid** when:
     - `product_id` is an integer
@@ -675,11 +558,6 @@ def _(mo, run_date):
            OR unit_price IS NULL
            OR unit_price < 0;
 
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver products MERGE {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -714,7 +592,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 8. Orders Cleaning and Standardization
+    ### 7. Orders Cleaning and Standardization
 
     Parse `order_date` with three common formats. Reject the row when:
     - `order_id` or `order_date` is missing
@@ -847,12 +725,6 @@ def _(mo, run_date):
            OR o.order_date > DATE '{run_date}'
            OR c.customer_id IS NULL;
 
-        -- Record this MERGE operation in the commit log
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver orders MERGE {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -887,7 +759,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 9. Order items Cleaning and Standardization
+    ### 8. Order items Cleaning and Standardization
 
     A line is **valid** when:
 
@@ -1056,12 +928,6 @@ def _(mo, run_date):
            OR p.product_id IS NULL
            OR i.unit_price IS NULL;
 
-        -- Log the commit message for auditing
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Silver order_items MERGE {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -1100,7 +966,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 10. Quality checks
+    ### 9. Quality checks
 
     These counts should be **0**. If one is not zero, Silver still has a problem.
     """)

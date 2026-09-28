@@ -25,17 +25,16 @@ def _(mo):
        - Contains numeric **measures** (e.g., `quantity`, `unit_price`, `sales_amount`).
        - Contains **foreign keys** pointing to surrounding dimension tables.
        - **Grain**: Exactly one row per item sold in an order (`order_item_id`).
-    2. **Dimension Tables (`dim_time`, `dim_customer`, `dim_product`, `dim_status`)**:
+    2. **Dimension Tables (`dim_date`, `dim_customer`, `dim_product`, `dim_status`)**:
        - Positioned as points of the star surrounding the fact table.
        - Contain rich descriptive attributes that allow business users to **filter, slice, dice, and group** the metrics (answering *Who*, *What*, *When*, *Where*, and *Status*).
 
     ---
 
     ### Incremental Loading Pattern (No Table Rebuilding)
-    Earlier iterations used `CREATE OR REPLACE TABLE`, which wiped out and rebuilt tables on every run.
     In this production-grade pipeline:
-    - We create tables once using **`CREATE TABLE IF NOT EXISTS`**.
-    - We merge new and updated records using **`MERGE INTO`**:
+    - Star schema tables are defined once in `00.3_gold_schema.py`.
+    - We merge new and updated records incrementally using **`MERGE INTO`**:
       - `WHEN MATCHED THEN UPDATE`: Updates existing records (e.g., an order moving from `Pending` to `Completed`, or customer moving cities).
       - `WHEN NOT MATCHED THEN INSERT`: Appends new records.
     - Historical data is preserved across incremental loads (`2026-09-17`, `2026-09-18`, etc.).
@@ -61,7 +60,7 @@ def _():
 
     if not os.path.exists(catalog_db_path):
         raise FileNotFoundError(
-            "DuckLake catalog not found. Please run 00_setup.py, 01_bronze.py, and 02_silver.py first."
+            "DuckLake catalog not found. Please run 00_setup.py, 00.1_bronze_schema.py, 00.2_silver_schema.py, 00.3_gold_schema.py, 01_bronze.py, and 02_silver.py first."
         )
 
     print(f"Building Gold Star Schema as of run_date = {run_date}")
@@ -100,7 +99,7 @@ def _(mo):
     ![Star Schema](star-schema-design.png)
 
     ### Star Schema Entity Relationships
-    - `fact_sales.date` &rarr; `dim_time.date` (*When*)
+    - `fact_sales.date` &rarr; `dim_date.date` (*When*)
     - `fact_sales.customer_id` &rarr; `dim_customer.customer_id` (*Who & Where*)
     - `fact_sales.product_id` &rarr; `dim_product.product_id` (*What*)
     - `fact_sales.status` &rarr; `dim_status.status` (*Lifecycle state*)
@@ -111,12 +110,12 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ### 1. Dimension: `gold.dim_time`
+    ### 1. Dimension: `gold.dim_date`
     The time dimension provides pre-computed calendar attributes (year, quarter, month, day name, week) for daily, weekly, monthly, and quarterly trend analysis.
 
     **Incremental Strategy**:
-    - `CREATE TABLE IF NOT EXISTS`: Creates the dimension table once.
-    - `MERGE INTO ... WHEN NOT MATCHED THEN INSERT`: Calendar attributes for an existing date never change, so we only insert newly observed dates from `silver.orders`.
+    - **Continuous Calendar**: Generates every contiguous calendar day between the first and last order dates using `generate_series`, ensuring no gaps for days with zero sales.
+    - `MERGE INTO ... WHEN NOT MATCHED THEN INSERT`: Calendar attributes for an existing date never change, so we only insert newly observed dates into `dim_date`.
     """)
     return
 
@@ -127,44 +126,43 @@ def _(mo, run_date):
         f"""
         BEGIN TRANSACTION;
 
-        -- 1. Create dim_time table if it does not exist
-        CREATE TABLE IF NOT EXISTS gold.dim_time (
-            date DATE,
-            year INTEGER,
-            quarter INTEGER,
-            month INTEGER,
-            month_name VARCHAR,
-            week INTEGER,
-            day INTEGER,
-            day_name VARCHAR
-        );
-
-        -- 2. Incrementally insert new dates from silver.orders up to run_date
-        MERGE INTO gold.dim_time AS t
+        -- Incrementally insert continuous calendar days up to run_date
+        MERGE INTO gold.dim_date AS t
         USING (
-            SELECT DISTINCT
-                order_date AS date,
-                year(order_date) AS year,
-                quarter(order_date) AS quarter,
-                month(order_date) AS month,
-                monthname(order_date) AS month_name,
-                week(order_date) AS week,
-                day(order_date) AS day,
-                dayname(order_date) AS day_name
-            FROM silver.orders
-            WHERE order_date IS NOT NULL
-              AND order_date <= DATE '{run_date}'
+            WITH bounds AS (
+                -- Find the first and last order dates up to run_date.
+                -- generate_series produce a continuous calendar with no missing days.
+                SELECT
+                    MIN(order_date) AS first_date,
+                    MAX(order_date) AS last_date
+                FROM silver.orders
+                WHERE order_date IS NOT NULL
+                  AND order_date <= DATE '{run_date}'
+            ),
+            days AS (
+                -- Generate every calendar day in that range
+                SELECT CAST(day_ts AS DATE) AS date
+                FROM bounds
+                CROSS JOIN generate_series(
+                    first_date, last_date, INTERVAL 1 DAY
+                ) AS generated(day_ts)
+            )
+            SELECT
+                date,
+                year(date) AS year,
+                quarter(date) AS quarter,
+                month(date) AS month,
+                monthname(date) AS month_name,
+                week(date) AS week,
+                day(date) AS day,
+                dayname(date) AS day_name
+            FROM days
         ) AS s
             ON t.date = s.date
         WHEN NOT MATCHED THEN INSERT (
             date, year, quarter, month, month_name, week, day, day_name
         ) VALUES (
             s.date, s.year, s.quarter, s.month, s.month_name, s.week, s.day, s.day_name
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Gold dim_time MERGE {run_date}'
         );
 
         COMMIT;
@@ -177,9 +175,9 @@ def _(mo, run_date):
 def _(mo, run_date):
     _df = mo.sql(
         f"""
-        -- Preview dim_time rows as of run_date
+        -- Preview dim_date rows as of run_date
         SELECT *
-        FROM gold.dim_time
+        FROM gold.dim_date
         WHERE date <= DATE '{run_date}'
         ORDER BY date;
         """
@@ -206,16 +204,7 @@ def _(mo, run_date):
         f"""
         BEGIN TRANSACTION;
 
-        -- 1. Create dim_customer table if it does not exist
-        CREATE TABLE IF NOT EXISTS gold.dim_customer (
-            customer_id INTEGER,
-            customer_name VARCHAR,
-            email VARCHAR,
-            city VARCHAR,
-            country VARCHAR
-        );
-
-        -- 2. Incrementally merge customers from silver.customers
+        -- Incrementally merge customers from silver.customers
         MERGE INTO gold.dim_customer AS t
         USING silver.customers AS s
             ON t.customer_id = s.customer_id
@@ -228,11 +217,6 @@ def _(mo, run_date):
             customer_id, customer_name, email, city, country
         ) VALUES (
             s.customer_id, s.customer_name, s.email, s.city, s.country
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Gold dim_customer MERGE {run_date}'
         );
 
         COMMIT;
@@ -271,16 +255,7 @@ def _(mo, run_date):
         f"""
         BEGIN TRANSACTION;
 
-        -- 1. Create dim_product table if it does not exist
-        CREATE TABLE IF NOT EXISTS gold.dim_product (
-            product_id INTEGER,
-            product_name VARCHAR,
-            subcategory_code VARCHAR,
-            subcategory VARCHAR,
-            category VARCHAR
-        );
-
-        -- 2. Incrementally merge products from silver.products
+        -- Incrementally merge products from silver.products
         MERGE INTO gold.dim_product AS t
         USING silver.products AS s
             ON t.product_id = s.product_id
@@ -293,11 +268,6 @@ def _(mo, run_date):
             product_id, product_name, subcategory_code, subcategory, category
         ) VALUES (
             s.product_id, s.product_name, s.subcategory_code, s.subcategory, s.category
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Gold dim_product MERGE {run_date}'
         );
 
         COMMIT;
@@ -335,17 +305,16 @@ def _(mo, run_date):
         f"""
         BEGIN TRANSACTION;
 
-        -- 1. Create dim_status table if it does not exist
-        CREATE TABLE IF NOT EXISTS gold.dim_status (
-            status VARCHAR
-        );
-
-        -- 2. Incrementally insert any new statuses from silver.orders up to run_date
+        -- Incrementally insert any new statuses from silver.orders up to run_date
         MERGE INTO gold.dim_status AS t
         USING (
             SELECT DISTINCT status
             FROM silver.orders
             WHERE status IS NOT NULL
+              -- '<=' is required because order statuses can originate from orders placed on prior dates
+              -- (order_date < run_date) that were updated on or before run_date. Using '=' would only
+              -- inspect orders created on run_date, failing to capture statuses from earlier order dates
+              -- or status transitions occurring on previously created orders.
               AND order_date <= DATE '{run_date}'
         ) AS s
             ON t.status = s.status
@@ -353,11 +322,6 @@ def _(mo, run_date):
             status
         ) VALUES (
             s.status
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Gold dim_status MERGE {run_date}'
         );
 
         COMMIT;
@@ -400,20 +364,7 @@ def _(mo, run_date):
         f"""
         BEGIN TRANSACTION;
 
-        -- 1. Create fact_sales table if it does not exist
-        CREATE TABLE IF NOT EXISTS gold.fact_sales (
-            order_item_id INTEGER,
-            order_id INTEGER,
-            date DATE,
-            customer_id INTEGER,
-            product_id INTEGER,
-            status VARCHAR,
-            quantity INTEGER,
-            unit_price DECIMAL(10, 2),
-            sales_amount DECIMAL(12, 2)
-        );
-
-        -- 2. Incrementally merge order items into fact_sales up to run_date
+        -- Incrementally merge order items into fact_sales up to run_date
         MERGE INTO gold.fact_sales AS t
         USING (
             SELECT
@@ -429,6 +380,11 @@ def _(mo, run_date):
             FROM silver.order_items i
             JOIN silver.orders o
                 ON i.order_id = o.order_id
+            -- '<=' is required because existing orders placed on earlier dates (order_date < run_date)
+            -- frequently have their status updated (e.g., from 'Pending' to 'Completed') on later dates.
+            -- Using '=' would restrict the source to only orders created on run_date, completely
+            -- excluding prior orders. As a result, the WHEN MATCHED THEN UPDATE clause would never fire
+            -- for earlier orders, leaving them with stale statuses and corrupting downstream sales metrics.
             WHERE o.order_date <= DATE '{run_date}'
         ) AS s
             ON t.order_item_id = s.order_item_id
@@ -461,11 +417,6 @@ def _(mo, run_date):
             s.quantity,
             s.unit_price,
             s.sales_amount
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Gold fact_sales MERGE {run_date}'
         );
 
         COMMIT;
@@ -519,9 +470,9 @@ def _(mo):
     - **Medallion Gold Layer**: Transformed validated Silver tables into analytics-ready Star Schema dimensional model.
     - **Star Schema Dimensional Modeling**:
       - `fact_sales` models business events at the atomic line-item grain (`order_item_id`).
-      - Dimension tables (`dim_time`, `dim_customer`, `dim_product`, `dim_status`) provide rich context for slicing and filtering.
+      - Dimension tables (`dim_date`, `dim_customer`, `dim_product`, `dim_status`) provide rich context for slicing and filtering.
     - **Incremental MERGE Pattern**:
-      - Used `CREATE TABLE IF NOT EXISTS` to ensure tables are never destroyed between runs.
+      - Tables are initialized once in `00.3_gold_schema.py`.
       - Applied `MERGE INTO` with `WHEN MATCHED THEN UPDATE` (e.g. order status changes, customer address updates) and `WHEN NOT MATCHED THEN INSERT`.
     - **Business Analytics via Star Joins**: Answered in the dedicated analytics notebook `04_answer_questions.py`.
     - **Testing Incremental Loads**:

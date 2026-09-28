@@ -57,7 +57,9 @@ def _():
     ).replace("\\", "/")
 
     if not os.path.exists(catalog_db_path):
-        raise FileNotFoundError("DuckLake catalog not found. Run 00_setup.py first.")
+        raise FileNotFoundError(
+            "DuckLake catalog not found. Please run 00_setup.py and 00.1_bronze_schema.py first."
+        )
     if not os.path.isdir(extract_dir):
         raise FileNotFoundError(
             f"No extract folder for run_date={run_date}. Expected {extract_dir}"
@@ -126,98 +128,12 @@ def _(extract_dir, mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 3. Create Bronze tables if they do not exist
-
-    All source columns are `VARCHAR`. Types are applied later in Silver.
-
-    `CREATE TABLE` in the **DuckLake**: the table definition is stored in the catalog.
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        BEGIN TRANSACTION;
-
-        CREATE TABLE IF NOT EXISTS bronze.customers (
-            customer_id VARCHAR,
-            customer_name VARCHAR,
-            email VARCHAR,
-            city VARCHAR,
-            country VARCHAR,
-            updated_date VARCHAR,
-            _load_date DATE,
-            _ingested_at TIMESTAMP,
-            _source_file VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS bronze.products (
-            product_id VARCHAR,
-            product_name VARCHAR,
-            subcategory_code VARCHAR,
-            unit_price VARCHAR,
-            updated_date VARCHAR,
-            _load_date DATE,
-            _ingested_at TIMESTAMP,
-            _source_file VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS bronze.product_category (
-            subcategory_code VARCHAR,
-            subcategory VARCHAR,
-            category VARCHAR,
-            updated_date VARCHAR,
-            _load_date DATE,
-            _ingested_at TIMESTAMP,
-            _source_file VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS bronze.orders (
-            order_id VARCHAR,
-            customer_id VARCHAR,
-            order_date VARCHAR,
-            status VARCHAR,
-            updated_date VARCHAR,
-            _load_date DATE,
-            _ingested_at TIMESTAMP,
-            _source_file VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS bronze.order_items (
-            order_item_id VARCHAR,
-            order_id VARCHAR,
-            product_id VARCHAR,
-            quantity VARCHAR,
-            unit_price VARCHAR,
-            updated_date VARCHAR,
-            _load_date DATE,
-            _ingested_at TIMESTAMP,
-            _source_file VARCHAR
-        );
-
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Create bronze tables'
-        );
-
-        COMMIT;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## 4. Load each extract file for `run_date`
+    ## 3. Load each extract file for `run_date`
 
     Pattern for every table:
 
     1. `DELETE` rows already loaded for this `_load_date` (safe re-run)
     2. `INSERT` from `read_csv`
-    3. Tag the DuckLake snapshot with `set_commit_message`
 
     Incremental folders contain **only changed/new rows**. Bronze **appends** them as a new `_load_date`. Silver MERGEs that day's keys into the curated tables.
     """)
@@ -245,11 +161,6 @@ def _(extract_dir, mo, run_date):
             '{extract_dir}/customers.csv' AS _source_file
         FROM read_csv('{extract_dir}/customers.csv', header = true, all_varchar = true);
 
-        CALL sales_lake.set_commit_message(
-            'student',
-            'Bronze customers load {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -275,11 +186,6 @@ def _(extract_dir, mo, run_date):
             current_timestamp AS _ingested_at,
             '{extract_dir}/products.csv' AS _source_file
         FROM read_csv('{extract_dir}/products.csv', header = true, all_varchar = true);
-
-        CALL sales_lake.set_commit_message(
-            'student',
-            'Bronze products load {run_date}'
-        );
 
         COMMIT;
         """
@@ -310,11 +216,6 @@ def _(extract_dir, mo, run_date):
             all_varchar = true
         );
 
-        CALL sales_lake.set_commit_message(
-            'student',
-            'Bronze product_category load {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -340,11 +241,6 @@ def _(extract_dir, mo, run_date):
             current_timestamp AS _ingested_at,
             '{extract_dir}/orders.csv' AS _source_file
         FROM read_csv('{extract_dir}/orders.csv', header = true, all_varchar = true);
-
-        CALL sales_lake.set_commit_message(
-            'student',
-            'Bronze orders load {run_date}'
-        );
 
         COMMIT;
         """
@@ -373,11 +269,6 @@ def _(extract_dir, mo, run_date):
             '{extract_dir}/order_items.csv' AS _source_file
         FROM read_csv('{extract_dir}/order_items.csv', header = true, all_varchar = true);
 
-        CALL sales_lake.set_commit_message(
-            'student',
-            'Bronze order_items load {run_date}'
-        );
-
         COMMIT;
         """
     )
@@ -387,7 +278,7 @@ def _(extract_dir, mo, run_date):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 5. Validation
+    ## 4. Validation
 
     For `2026-09-17` you should see about 16 customers (including a duplicate id), 16 products, 10 category rows (including a duplicate code), 18 orders, and 34 order items (including a duplicate `order_item_id`).
 
@@ -493,7 +384,7 @@ def _(mo):
     - Preserved raw text values and added `_load_date`, `_ingested_at`, and `_source_file`.
     - Made the load re-runnable for the same `run_date` without touching other dates.
 
-    **Learned:** Bronze is the landing zone. Data cleaning is done in Silver. Next, open `02_silver.py` with the same `run_date`.
+    **Learned:** Bronze is the landing zone. Tables are defined in `00.1_bronze_schema.py`. Data cleaning is done in Silver. Next, open `02_silver.py` with the same `run_date`.
     """)
     return
 

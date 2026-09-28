@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.24.2"
+__generated_with = "0.23.9"
 app = marimo.App()
 
 
@@ -18,13 +18,16 @@ def _(mo):
     | **Gold** | `gold` | Business-ready aggregates and KPIs (Key Performance Indicators) |
     | **Quarantine** | `quarantine` | Rows that failed Silver quality checks |
 
-    Run the notebooks **in order**, then repeat 01–03 when you change `run_date`:
+    Run the setup and schema notebooks **once**, then run 01–03 when you change `run_date`:
 
-    1. `00_setup.py` — once (recreating the lakehouse)
-    2. `01_bronze.py` — ingest `data/<run_date>/`
-    3. `02_silver.py` — clean and validate
-    4. `03_gold.py` — build Star Schema
-    5. `04_answer_questions.py` — analytics & business questions
+    1. `00_setup.py` — reset lakehouse and create schemas
+    2. `00.1_bronze_schema.py` — create Bronze tables
+    3. `00.2_silver_schema.py` — create Silver and Quarantine tables
+    4. `00.3_gold_schema.py` — create Gold Star Schema tables
+    5. `01_bronze.py` — ingest `data/<run_date>/`
+    6. `02_silver.py` — clean and validate
+    7. `03_gold.py` — populate Star Schema
+    8. `04_answer_questions.py` — analytics & business questions
 
     Valid processing dates: `2026-09-17` (first load), `2026-09-18`, `2026-09-19`, `2026-09-20`.
     """)
@@ -46,7 +49,7 @@ def _(mo):
 
     - `ATTACH ... (TYPE DUCKLAKE, DATA_PATH ...)` — create/open the catalog
     - `CREATE SCHEMA` — Bronze / Silver / Gold / Quarantine
-    - ACID `BEGIN` / `COMMIT` with `set_commit_message`
+    - ACID `BEGIN` / `COMMIT`
     - Snapshots via `ducklake_snapshots('sales_lake')`
 
     **DuckDB features** (compute, not storage): `read_csv`, `try_cast`, `MERGE INTO` for incremental Silver loads, and data cleaning using SQL.
@@ -156,11 +159,6 @@ def _(mo):
         CREATE SCHEMA IF NOT EXISTS gold;
         CREATE SCHEMA IF NOT EXISTS quarantine;
 
-        CALL sales_lake.set_commit_message(
-            'admin',
-            'Create bronze, silver, gold, and quarantine schemas'
-        );
-
         COMMIT;
         """
     )
@@ -185,22 +183,6 @@ def _(mo):
         FROM information_schema.schemata
         WHERE catalog_name = 'sales_lake'
         ORDER BY schema_name;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- DuckLake snapshot log (not available on a plain DuckDB table)
-        SELECT
-            snapshot_id,
-            CAST(snapshot_time AS VARCHAR) AS snapshot_time,
-            author,
-            commit_message
-        FROM ducklake_snapshots('sales_lake');
         """
     )
     return
@@ -233,7 +215,12 @@ def _(mo):
     mo.md(r"""
     ### What to do next
 
-    Open `01_bronze.py` and set:
+    Next, run the schema notebooks to initialize the table definitions:
+    1. `00.1_bronze_schema.py`
+    2. `00.2_silver_schema.py`
+    3. `00.3_gold_schema.py`
+
+    Then open `01_bronze.py` and set:
 
     ```python
     run_date = "2026-09-17"
@@ -241,7 +228,7 @@ def _(mo):
 
     Use the same `run_date` in `02_silver.py` and `03_gold.py`. After a successful full run for 17 Sep, change it to `2026-09-18` and re-run 01–03 to practice incremental loads, then run `04_answer_questions.py` for analytics.
 
-    Do **not** re-run this setup notebook between those dates, or you will wipe Bronze history.
+    Do **not** re-run this setup notebook between those dates, or you will wipe the lakehouse.
     """)
     return
 
@@ -254,9 +241,8 @@ def _(mo):
     - Created a DuckLake catalog named `sales_lake`.
     - Separated metadata (`sales_lake_catalog.db`) from Parquet data (`sales_lake_data/`).
     - Added four schemas that match the Medallion layers plus quarantine.
-    - Recorded a commit message on the schema-creation snapshot.
 
-    **Learned:** DuckDB runs the SQL; DuckLake stores the lakehouse. Schemas are the folders of the catalog. The next notebook loads raw files into `bronze`.
+    **Learned:** DuckDB runs the SQL; DuckLake stores the lakehouse. Schemas are the folders of the catalog. The next notebook `00.1_bronze_schema.py` defines tables under `bronze`.
     """)
     return
 

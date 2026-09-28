@@ -13,7 +13,7 @@ def _(mo):
 
     In `03_gold.py`, we created an incremental **Star Schema** with:
     - **`gold.fact_sales`**: Central fact table storing sales transactions at the order-item grain.
-    - **`gold.dim_time`**: Calendar dimension for daily, weekly, and monthly time-series analysis.
+    - **`gold.dim_date`**: Calendar dimension for daily, weekly, and monthly time-series analysis.
     - **`gold.dim_customer`**: Customer and geographic dimension.
     - **`gold.dim_product`**: Product catalog and category hierarchy.
     - **`gold.dim_status`**: Order fulfillment pipeline statuses.
@@ -45,7 +45,7 @@ def _():
 
     if not os.path.exists(catalog_db_path):
         raise FileNotFoundError(
-            "DuckLake catalog not found. Please run 00_setup.py, 01_bronze.py, 02_silver.py, and 03_gold.py first."
+            "DuckLake catalog not found. Please run 00_setup.py, the schema notebooks (00.1-00.3), 01_bronze.py, 02_silver.py, and 03_gold.py first."
         )
 
     print("Connected to DuckLake Gold Star Schema.")
@@ -131,7 +131,7 @@ def _(mo):
             SUM(f.quantity) AS units_sold,
             ROUND(SUM(f.sales_amount), 2) AS total_sales
         FROM gold.fact_sales f
-        JOIN gold.dim_time t
+        JOIN gold.dim_date t
             ON f.date = t.date
         WHERE f.status IN ('Completed', 'Shipped')
         GROUP BY t.date, t.day_name, t.week
