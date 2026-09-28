@@ -18,6 +18,7 @@ mnist/
 *.pt
 *.pth
 .jupyter_tmp/
+lakehouse/
 
 # Distribution / packaging
 .Python
