@@ -1,77 +1,15 @@
 # CMPS 360: Retail Sales Medallion Lakehouse on Databricks
 
-A clean, production-grade **Medallion Architecture (Bronze &rarr; Silver &rarr; Gold)** data pipeline on **Databricks Free Edition**, built with **Databricks SQL**, **Delta Lake**, and **Unity Catalog**.
+**Medallion Architecture (Bronze &rarr; Silver &rarr; Gold)** data pipeline on **Databricks Free Edition**, built with **Databricks SQL**, **Delta Lake**, and **Unity Catalog**.
 
-This project processes retail sales transactions across GCC markets (Qatar, UAE, Saudi Arabia), handles intentionally dirty raw extracts, isolates invalid records via the **Quarantine Pattern**, implements **Self-Healing Quarantine Retries**, and populates an analytical **Kimball Star Schema**.
-
----
-
-## Architecture at a Glance
-
-```text
-  Landing Zone (Volume)         Bronze Layer (Raw)           Silver Layer (Curated)          Gold Layer (Star Schema)
-┌──────────────────────┐     ┌───────────────────────┐     ┌───────────────────────┐     ┌─────────────────────────────┐
-│  Daily Batch CSVs    │ ──> │  bronze.customers     │ ──> │  silver.customers     │ ──> │  gold.dim_date (Calendar)   │
-│  2026-09-17 .. 09-20 │     │  bronze.products      │     │  silver.products      │     │  gold.dim_customer          │
-│                      │     │  bronze.orders        │     │  silver.orders        │     │  gold.dim_product           │
-│                      │     │  bronze.order_items   │     │  silver.order_items   │     │  gold.dim_status            │
-│                      │     │  bronze.pipeline_runs │     │  silver.product_cat   │     │  gold.fact_sales (Measures) │
-└──────────────────────┘     └───────────────────────┘     └───────────────────────┘     └─────────────────────────────┘
-                                                                       │ ▲
-                                                            Quarantine │ │ Self-Healing
-                                                               Routing │ │ Retry
-                                                                       ▼ │
-                                                           ┌───────────────────────┐
-                                                           │   quarantine.*        │
-                                                           │   (Bad data + reason) │
-                                                           └───────────────────────┘
-```
-
-### Medallion Layers
-- **Landing Zone** (`/Volumes/sales_lake/bronze/landing_zone`): Raw CSV files stored in a Unity Catalog Volume.
-- **Bronze Layer** (`bronze`): Raw data loaded as-is with all-`STRING` schema to prevent ingestion crashes, enriched with audit columns (`_load_date`, `_ingested_at`, `_source_file`).
-- **Silver Layer** (`silver`): Cleaned, strongly typed (`INT`, `DECIMAL`, `DATE`, `TIMESTAMP`), and deduplicated business entities using Delta Lake `MERGE INTO`.
-- **Quarantine Schema** (`quarantine`): Rejection holding area for corrupt prices, future dates, or orphan foreign keys, storing a descriptive `rejection_reason`.
-- **Self-Healing Quarantine Retry**: Automatically releases previously quarantined line items when upstream product/order dependencies are corrected on later dates (e.g. Desk 104 on 19 Sep).
-- **Gold Layer** (`gold`): Kimball Star Schema centered on `gold.fact_sales` at the atomic order-item grain, supported by 4 dimensions (`dim_date`, `dim_customer`, `dim_product`, `dim_status`).
-
----
-
-## Project Structure
-
-```text
-03_medallion/
-├── landing_zone/                      # Shared raw CSV extracts with planted data quality issues
-│   └── sales_data/ (2026-09-17 .. 2026-09-20)
-├── 01_meddalion_ducklake/             # DuckLake / DuckDB implementation
-└── 02_meddalion_databricks/           # Databricks Lakehouse implementation
-    ├── README.md                      # This setup and execution guide
-    ├── star-schema-design.png         # Kimball Star Schema diagram
-    ├── run_pipeline.py                # Automated pipeline orchestrator notebook
-    ├── setup/                         # Schema and environment initialization
-    │   ├── 00_setup.sql               # Creates catalog, schemas, volume, and tracking table
-    │   ├── 00.1_bronze_schema.sql     # Bronze Delta tables (all-STRING + audit metadata)
-    │   ├── 00.2_silver_schema.sql     # Silver curated tables & Quarantine isolation tables
-    │   ├── 00.3_gold_schema.sql       # Gold Star Schema (facts and dimensions)
-    │   └── 00.4_load_landing_files.py # Helper: copies root landing_zone CSVs to Volume
-    ├── pipeline/                      # Core data engineering pipelines
-    │   ├── 01_bronze.sql              # Idempotent batch ingestion into Bronze Delta tables
-    │   ├── 02_silver.sql              # Cleansing, deduplication, quarantine routing, self-healing MERGE
-    │   └── 03_gold.sql                # Star schema incremental population & calendar generation
-    └── analysis/                      # Analytics & reporting layer
-        └── 04_answer_questions.sql   # 8 business and operational KPI queries using Star Joins
-```
-
----
+This project processes retail sales transactions across GCC markets (Qatar, UAE, Saudi Arabia), handles dirty raw extracts, isolates invalid records in the **Quarantine** area, and populates an analytical **Kimball Star Schema**.
 
 ## Quick Setup: Databricks Free Edition
 
 ### 1. Get a Free Databricks Account
-1. Go to [community.cloud.databricks.com](https://community.cloud.databricks.com).
+1. Go to [Databricks Free Edition](https://www.databricks.com/learn/free-edition).
 2. Sign up for **Databricks Free Edition** (free forever, no credit card required).
 3. Activate your account using the email link and sign in.
-
-> **Note on Compute**: In the latest Databricks Free Edition, **compute is fully automatic**. You do not need to create or configure a cluster—when you open any notebook, Databricks automatically connects to the serverless/default environment.
 
 ### 2. Import the Project into Databricks
 
