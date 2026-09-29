@@ -259,4 +259,37 @@ print_status_table()
 # MAGIC %md
 # MAGIC ## Summary & Next Steps
 # MAGIC - The Medallion Lakehouse has been executed end-to-end.
-# MAGIC - Open [`analysis/04_answer_questions.sql`](./analysis/04_answer_questions.sql) to query the Gold Star Schema and inspect business KPIs!
+# MAGIC - Open [`analysis/04_answer_questions`]($./analysis/04_answer_questions) (or use the dynamically resolved link below) to query the Gold Star Schema and inspect business KPIs!
+
+# COMMAND ----------
+
+# Dynamically resolve and display the path to the analysis notebook
+analysis_nb_path = get_notebook_path("analysis/04_answer_questions")
+workspace_url = f"/#workspace{analysis_nb_path}" if analysis_nb_path.startswith("/") else f"./analysis/04_answer_questions"
+
+print(f"✓ Pipeline completed successfully!")
+print(f"  Analysis Notebook Path: {analysis_nb_path}")
+
+try:
+    displayHTML(f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 14px 18px; background-color: #f0f7ff; border: 1px solid #cce3f5; border-left: 5px solid #0066cc; border-radius: 6px; margin: 10px 0;">
+        <h4 style="margin: 0 0 6px 0; color: #003366; font-size: 15px;">Next Step: Query Gold Star Schema</h4>
+        <p style="margin: 0 0 10px 0; color: #333333; font-size: 13px;">
+            The Medallion Lakehouse has been executed end-to-end. Click below to open the analysis notebook:
+        </p>
+        <p style="margin: 0 0 8px 0;">
+            <a href="{workspace_url}" target="_top" style="display: inline-block; font-size: 13px; font-weight: 600; color: #ffffff; background-color: #0066cc; padding: 7px 15px; border-radius: 4px; text-decoration: none;">
+                Open Analysis Notebook
+            </a>
+            <a href="$./analysis/04_answer_questions" target="_top" style="display: inline-block; font-size: 13px; font-weight: 600; color: #0066cc; background-color: #ffffff; border: 1px solid #0066cc; padding: 6px 14px; border-radius: 4px; text-decoration: none; margin-left: 8px;">
+                Workspace Relative Link
+            </a>
+        </p>
+        <div style="font-size: 12px; color: #666666; font-family: monospace; margin-top: 6px;">
+            Resolved Path: {analysis_nb_path}
+        </div>
+    </div>
+    """)
+except Exception:
+    pass
+
