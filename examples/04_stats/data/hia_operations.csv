@@ -1,0 +1,31 @@
+day,concourse,transit_passengers_thousands,ground_staff_on_duty,baggage_wait_minutes,on_time_departure_pct,service_speed_rating,passenger_satisfaction_rating
+Day 1,North Concourse,121.8,506,30.8,92.7,Average,Very High
+Day 2,North Concourse,104.3,488,29.4,89.7,Good,High
+Day 3,North Concourse,134.1,545,32.9,89.5,Average,High
+Day 4,North Concourse,100.3,473,27.6,93.0,Good,Very High
+Day 5,North Concourse,87.9,437,25.9,93.9,Good,Very High
+Day 6,North Concourse,135.5,544,35.7,89.5,Average,High
+Day 7,North Concourse,111.0,500,32.0,92.8,Average,Very High
+Day 8,North Concourse,85.3,438,31.2,89.3,Average,High
+Day 9,North Concourse,111.8,494,29.5,90.0,Good,Very High
+Day 10,North Concourse,131.3,532,34.8,85.1,Average,High
+Day 11,North Concourse,127.3,537,32.5,88.8,Average,High
+Day 12,North Concourse,104.1,476,30.1,90.5,Average,Very High
+Day 13,North Concourse,104.7,479,30.4,89.5,Average,High
+Day 14,North Concourse,125.0,529,32.0,90.2,Average,Very High
+Day 15,North Concourse,121.4,538,28.7,90.9,Good,Very High
+Day 16,South Concourse,118.0,506,32.1,86.9,Average,High
+Day 17,South Concourse,124.8,535,29.1,90.0,Good,Very High
+Day 18,South Concourse,123.5,535,32.1,87.9,Average,High
+Day 19,South Concourse,86.0,434,26.5,93.4,Good,Very High
+Day 20,South Concourse,123.4,520,36.8,84.5,Poor,High
+Day 21,South Concourse,101.2,492,27.5,90.9,Good,Very High
+Day 22,South Concourse,139.2,569,31.6,90.5,Average,Very High
+Day 23,South Concourse,132.7,537,32.7,87.5,Average,High
+Day 24,South Concourse,125.8,533,32.3,89.1,Average,High
+Day 25,South Concourse,104.5,499,27.0,94.1,Good,Very High
+Day 26,South Concourse,101.3,467,29.7,91.7,Good,Very High
+Day 27,South Concourse,86.4,435,23.2,93.6,Excellent,Very High
+Day 28,South Concourse,93.8,441,32.6,89.2,Average,High
+Day 29,South Concourse,130.1,560,33.6,87.3,Average,High
+Day 30,South Concourse,93.3,458,25.1,92.7,Good,Very High

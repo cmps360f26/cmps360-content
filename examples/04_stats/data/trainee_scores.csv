@@ -1,0 +1,11 @@
+trainee_id,name,gender,speaking_score,math_score,track
+T01,Omar,M,40,38,Business Analytics
+T02,Layla,F,45,41,Data Engineering
+T03,Noura,F,23,42,Business Analytics
+T04,Khalid,M,39,48,Data Engineering
+T05,Yousef,M,39,32,Business Analytics
+T06,Fatima,F,44,46,Data Engineering
+T07,Hamad,M,38,39,Business Analytics
+T08,Maryam,F,42,44,Data Engineering
+T09,Saad,M,36,37,Business Analytics
+T10,Reem,F,41,43,Data Engineering

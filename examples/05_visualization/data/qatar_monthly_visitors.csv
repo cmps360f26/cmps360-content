@@ -1,0 +1,13 @@
+month,month_num,quarter,visitors_thousands,hotel_occupancy_pct
+Jan,1,Q1,403,76.5
+Feb,2,Q1,389,74.2
+Mar,3,Q1,345,68.0
+Apr,4,Q2,285,59.4
+May,5,Q2,215,51.2
+Jun,6,Q2,165,42.8
+Jul,7,Q3,140,39.5
+Aug,8,Q3,155,41.0
+Sep,9,Q3,220,52.3
+Oct,10,Q4,310,64.7
+Nov,11,Q4,420,78.9
+Dec,12,Q4,460,83.4

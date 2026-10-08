@@ -1,0 +1,201 @@
+order_id,customer_zone,payment_method,channel,order_amount_qar
+ORD-001,Doha,Card,Drive-thru,133.16
+ORD-002,Doha,Card,Mobile App,216.12
+ORD-003,Al Rayyan,Card,In-Store,67.93
+ORD-004,Al Wakrah,Wallet,In-Store,105.04
+ORD-005,Doha,Cash,Mobile App,251.49
+ORD-006,Al Rayyan,Cash,In-Store,189.89
+ORD-007,Lusail,Card,Mobile App,43.85
+ORD-008,Doha,Wallet,Drive-thru,246.56
+ORD-009,Lusail,Wallet,Mobile App,135.28
+ORD-010,Doha,Card,In-Store,33.42
+ORD-011,Al Rayyan,Card,Mobile App,199.48
+ORD-012,Al Rayyan,Wallet,In-Store,144.76
+ORD-013,Al Rayyan,Wallet,Mobile App,120.71
+ORD-014,Doha,Card,Drive-thru,182.6
+ORD-015,Lusail,Wallet,In-Store,121.26
+ORD-016,Doha,Wallet,Drive-thru,150.22
+ORD-017,Doha,Card,Drive-thru,113.84
+ORD-018,Doha,Cash,In-Store,116.82
+ORD-019,Al Rayyan,Card,In-Store,64.69
+ORD-020,Al Rayyan,Card,In-Store,156.8
+ORD-021,Doha,Cash,In-Store,320.09
+ORD-022,Al Rayyan,Card,In-Store,102.14
+ORD-023,Doha,Cash,Mobile App,76.77
+ORD-024,Al Rayyan,Card,In-Store,89.16
+ORD-025,Doha,Card,In-Store,52.74
+ORD-026,Al Rayyan,Card,Mobile App,109.64
+ORD-027,Doha,Card,In-Store,115.14
+ORD-028,Al Wakrah,Card,Mobile App,124.44
+ORD-029,Doha,Cash,In-Store,187.5
+ORD-030,Doha,Cash,In-Store,86.06
+ORD-031,Doha,Card,Mobile App,89.76
+ORD-032,Al Wakrah,Card,Mobile App,59.88
+ORD-033,Lusail,Card,Drive-thru,85.75
+ORD-034,Doha,Card,Mobile App,32.99
+ORD-035,Al Rayyan,Cash,Mobile App,187.51
+ORD-036,Lusail,Cash,In-Store,69.27
+ORD-037,Al Rayyan,Cash,In-Store,69.93
+ORD-038,Al Rayyan,Cash,Mobile App,126.94
+ORD-039,Doha,Wallet,Mobile App,77.0
+ORD-040,Doha,Card,Drive-thru,72.82
+ORD-041,Lusail,Card,In-Store,66.28
+ORD-042,Al Wakrah,Transfer,In-Store,84.38
+ORD-043,Al Rayyan,Card,Mobile App,136.57
+ORD-044,Doha,Card,In-Store,192.88
+ORD-045,Doha,Cash,Drive-thru,74.16
+ORD-046,Lusail,Transfer,Drive-thru,121.45
+ORD-047,Lusail,Card,In-Store,95.4
+ORD-048,Lusail,Card,Mobile App,261.97
+ORD-049,Lusail,Cash,Mobile App,241.28
+ORD-050,Al Rayyan,Card,In-Store,56.95
+ORD-051,Doha,Cash,Drive-thru,123.49
+ORD-052,Doha,Wallet,Mobile App,130.2
+ORD-053,Lusail,Card,Mobile App,94.45
+ORD-054,Al Rayyan,Cash,In-Store,85.78
+ORD-055,Doha,Cash,Drive-thru,76.18
+ORD-056,Doha,Card,In-Store,89.87
+ORD-057,Al Rayyan,Cash,In-Store,172.93
+ORD-058,Doha,Cash,Drive-thru,149.24
+ORD-059,Doha,Wallet,In-Store,116.22
+ORD-060,Al Rayyan,Cash,In-Store,81.02
+ORD-061,Al Rayyan,Wallet,Drive-thru,90.52
+ORD-062,Al Rayyan,Cash,Drive-thru,318.54
+ORD-063,Doha,Card,Mobile App,266.29
+ORD-064,Lusail,Card,Mobile App,88.88
+ORD-065,Doha,Card,In-Store,68.69
+ORD-066,Doha,Cash,In-Store,94.43
+ORD-067,Lusail,Card,In-Store,102.86
+ORD-068,Al Rayyan,Transfer,Mobile App,63.22
+ORD-069,Lusail,Card,Mobile App,140.13
+ORD-070,Al Rayyan,Cash,Mobile App,112.25
+ORD-071,Al Rayyan,Card,Mobile App,97.2
+ORD-072,Doha,Cash,In-Store,86.98
+ORD-073,Doha,Wallet,In-Store,179.43
+ORD-074,Doha,Card,In-Store,81.05
+ORD-075,Doha,Cash,Mobile App,372.71
+ORD-076,Al Wakrah,Cash,In-Store,133.14
+ORD-077,Doha,Card,Drive-thru,127.61
+ORD-078,Lusail,Cash,In-Store,156.83
+ORD-079,Al Rayyan,Cash,In-Store,261.75
+ORD-080,Lusail,Cash,In-Store,87.36
+ORD-081,Al Rayyan,Card,Mobile App,164.9
+ORD-082,Al Rayyan,Card,Mobile App,161.25
+ORD-083,Al Rayyan,Card,In-Store,204.55
+ORD-084,Doha,Wallet,In-Store,104.97
+ORD-085,Lusail,Transfer,Mobile App,196.31
+ORD-086,Doha,Card,In-Store,83.3
+ORD-087,Doha,Wallet,Mobile App,32.24
+ORD-088,Al Rayyan,Card,Mobile App,48.16
+ORD-089,Doha,Transfer,In-Store,122.72
+ORD-090,Al Wakrah,Card,In-Store,191.22
+ORD-091,Al Wakrah,Card,Drive-thru,128.04
+ORD-092,Al Wakrah,Cash,In-Store,132.83
+ORD-093,Doha,Cash,In-Store,163.31
+ORD-094,Doha,Card,Mobile App,158.52
+ORD-095,Al Wakrah,Card,Drive-thru,225.65
+ORD-096,Doha,Transfer,Drive-thru,92.89
+ORD-097,Al Wakrah,Wallet,Mobile App,150.28
+ORD-098,Al Wakrah,Card,In-Store,253.8
+ORD-099,Lusail,Card,In-Store,150.14
+ORD-100,Doha,Cash,Mobile App,229.75
+ORD-101,Doha,Card,Mobile App,95.18
+ORD-102,Lusail,Card,In-Store,197.82
+ORD-103,Doha,Cash,Drive-thru,198.73
+ORD-104,Doha,Cash,In-Store,46.63
+ORD-105,Al Rayyan,Cash,In-Store,141.09
+ORD-106,Al Wakrah,Cash,In-Store,133.2
+ORD-107,Al Rayyan,Card,In-Store,186.08
+ORD-108,Al Rayyan,Card,In-Store,133.9
+ORD-109,Doha,Cash,In-Store,404.28
+ORD-110,Al Rayyan,Cash,In-Store,285.56
+ORD-111,Al Wakrah,Wallet,Mobile App,165.06
+ORD-112,Doha,Card,Mobile App,138.86
+ORD-113,Al Rayyan,Transfer,Mobile App,63.2
+ORD-114,Lusail,Cash,Drive-thru,134.13
+ORD-115,Lusail,Card,In-Store,128.34
+ORD-116,Al Rayyan,Cash,In-Store,388.27
+ORD-117,Lusail,Card,Drive-thru,159.68
+ORD-118,Doha,Card,In-Store,208.03
+ORD-119,Doha,Wallet,Drive-thru,87.95
+ORD-120,Lusail,Card,In-Store,187.58
+ORD-121,Lusail,Card,Drive-thru,30.55
+ORD-122,Lusail,Cash,In-Store,228.0
+ORD-123,Al Wakrah,Cash,Drive-thru,76.64
+ORD-124,Al Rayyan,Cash,Mobile App,63.75
+ORD-125,Al Rayyan,Card,Drive-thru,112.22
+ORD-126,Lusail,Card,In-Store,183.31
+ORD-127,Al Rayyan,Wallet,Mobile App,111.72
+ORD-128,Lusail,Cash,Drive-thru,68.06
+ORD-129,Lusail,Card,Mobile App,159.1
+ORD-130,Lusail,Card,Mobile App,77.52
+ORD-131,Doha,Wallet,Mobile App,111.28
+ORD-132,Doha,Card,In-Store,83.25
+ORD-133,Doha,Card,Mobile App,131.72
+ORD-134,Al Rayyan,Cash,Mobile App,114.34
+ORD-135,Doha,Card,Drive-thru,132.12
+ORD-136,Al Rayyan,Cash,In-Store,392.99
+ORD-137,Al Rayyan,Card,In-Store,64.46
+ORD-138,Doha,Cash,Drive-thru,240.51
+ORD-139,Al Rayyan,Card,Drive-thru,25.19
+ORD-140,Doha,Cash,In-Store,61.76
+ORD-141,Doha,Wallet,Mobile App,135.53
+ORD-142,Lusail,Wallet,In-Store,112.17
+ORD-143,Doha,Wallet,In-Store,159.99
+ORD-144,Doha,Card,In-Store,99.73
+ORD-145,Al Rayyan,Card,In-Store,117.19
+ORD-146,Lusail,Card,Mobile App,115.94
+ORD-147,Doha,Card,In-Store,123.64
+ORD-148,Al Rayyan,Cash,Drive-thru,128.25
+ORD-149,Doha,Card,Drive-thru,113.38
+ORD-150,Doha,Card,Mobile App,100.36
+ORD-151,Al Rayyan,Wallet,Mobile App,107.38
+ORD-152,Al Rayyan,Wallet,In-Store,137.74
+ORD-153,Al Rayyan,Card,Mobile App,139.04
+ORD-154,Lusail,Card,Mobile App,84.24
+ORD-155,Al Wakrah,Card,In-Store,71.41
+ORD-156,Al Rayyan,Card,Drive-thru,45.55
+ORD-157,Doha,Wallet,Mobile App,283.44
+ORD-158,Lusail,Cash,Drive-thru,59.39
+ORD-159,Doha,Card,Mobile App,76.74
+ORD-160,Doha,Card,Mobile App,179.09
+ORD-161,Doha,Wallet,In-Store,53.43
+ORD-162,Doha,Cash,Drive-thru,43.23
+ORD-163,Al Wakrah,Wallet,Drive-thru,89.88
+ORD-164,Lusail,Wallet,In-Store,198.57
+ORD-165,Al Rayyan,Card,In-Store,119.66
+ORD-166,Doha,Card,In-Store,333.46
+ORD-167,Doha,Cash,Mobile App,171.88
+ORD-168,Doha,Card,Drive-thru,57.7
+ORD-169,Doha,Transfer,In-Store,128.39
+ORD-170,Al Rayyan,Card,Mobile App,46.7
+ORD-171,Lusail,Card,In-Store,161.93
+ORD-172,Al Rayyan,Card,Drive-thru,93.86
+ORD-173,Doha,Card,Mobile App,159.92
+ORD-174,Al Wakrah,Card,Mobile App,266.4
+ORD-175,Lusail,Wallet,In-Store,260.65
+ORD-176,Al Rayyan,Transfer,In-Store,111.67
+ORD-177,Al Rayyan,Cash,In-Store,183.5
+ORD-178,Doha,Card,In-Store,100.51
+ORD-179,Doha,Cash,Drive-thru,135.17
+ORD-180,Doha,Transfer,Mobile App,49.88
+ORD-181,Lusail,Card,Drive-thru,77.55
+ORD-182,Doha,Card,Drive-thru,163.72
+ORD-183,Doha,Cash,Mobile App,43.23
+ORD-184,Doha,Cash,Mobile App,128.01
+ORD-185,Doha,Cash,Drive-thru,133.79
+ORD-186,Lusail,Cash,Mobile App,166.48
+ORD-187,Lusail,Cash,In-Store,50.03
+ORD-188,Al Rayyan,Cash,In-Store,44.99
+ORD-189,Doha,Card,In-Store,200.01
+ORD-190,Al Rayyan,Card,Drive-thru,133.85
+ORD-191,Al Rayyan,Cash,Mobile App,101.26
+ORD-192,Doha,Transfer,In-Store,48.83
+ORD-193,Doha,Card,Mobile App,97.59
+ORD-194,Doha,Transfer,Mobile App,65.22
+ORD-195,Al Rayyan,Card,In-Store,194.63
+ORD-196,Al Rayyan,Cash,In-Store,56.61
+ORD-197,Doha,Card,Mobile App,107.56
+ORD-198,Doha,Card,Mobile App,184.4
+ORD-199,Al Rayyan,Wallet,Mobile App,167.4
+ORD-200,Al Rayyan,Cash,Mobile App,94.69

@@ -1,0 +1,7 @@
+country,iso_alpha,city,latitude,longitude,population_millions,orders_thousands,order_rate_per_1000
+Qatar,QAT,Doha,25.2854,51.531,3.0,22.5,7.5
+United Arab Emirates,ARE,Abu Dhabi,24.4539,54.3773,10.0,62.0,6.2
+Kuwait,KWT,Kuwait City,29.3759,47.9774,4.8,32.6,6.79
+Bahrain,BHR,Manama,26.2235,50.5876,1.6,9.9,6.19
+Saudi Arabia,SAU,Riyadh,24.7136,46.6753,36.4,182.0,5.0
+Oman,OMN,Muscat,23.588,58.3829,5.1,21.4,4.2

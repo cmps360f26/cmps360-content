@@ -1,0 +1,13 @@
+quarter,energy_source,generation_gwh
+Q1,Natural Gas,9850
+Q1,Al Kharsaah Solar,720
+Q1,Cogeneration,310
+Q2,Natural Gas,12400
+Q2,Al Kharsaah Solar,1080
+Q2,Cogeneration,420
+Q3,Natural Gas,15200
+Q3,Al Kharsaah Solar,1350
+Q3,Cogeneration,450
+Q4,Natural Gas,10400
+Q4,Al Kharsaah Solar,1480
+Q4,Cogeneration,320

@@ -1,0 +1,81 @@
+order_id,mall_branch,category,items_count,order_amount_qar
+ORD-QAR-001,Mall of Qatar,Electronics,4,130.17
+ORD-QAR-002,Villaggio,Groceries,6,503.23
+ORD-QAR-003,Villaggio,Home,4,669.28
+ORD-QAR-004,Mall of Qatar,Home,4,288.41
+ORD-QAR-005,Mall of Qatar,Electronics,3,109.6
+ORD-QAR-006,Mall of Qatar,Groceries,5,1100.9
+ORD-QAR-007,Place Vendome,Groceries,5,168.05
+ORD-QAR-008,Mall of Qatar,Electronics,7,105.45
+ORD-QAR-009,Mall of Qatar,Electronics,3,406.48
+ORD-QAR-010,Place Vendome,Electronics,4,71.93
+ORD-QAR-011,Doha Festival City,Electronics,3,122.12
+ORD-QAR-012,Place Vendome,Beauty,5,331.81
+ORD-QAR-013,Doha Festival City,Home,8,267.89
+ORD-QAR-014,Place Vendome,Fashion,4,123.8
+ORD-QAR-015,Place Vendome,Groceries,9,105.67
+ORD-QAR-016,Doha Festival City,Home,6,407.08
+ORD-QAR-017,Doha Festival City,Home,6,297.71
+ORD-QAR-018,Villaggio,Electronics,7,850.79
+ORD-QAR-019,Villaggio,Fashion,3,272.5
+ORD-QAR-020,Mall of Qatar,Home,9,205.69
+ORD-QAR-021,Doha Festival City,Home,3,252.1
+ORD-QAR-022,Villaggio,Electronics,6,170.01
+ORD-QAR-023,Doha Festival City,Fashion,5,315.94
+ORD-QAR-024,Place Vendome,Groceries,7,35.77
+ORD-QAR-025,Place Vendome,Fashion,4,553.51
+ORD-QAR-026,Villaggio,Fashion,5,96.91
+ORD-QAR-027,Mall of Qatar,Groceries,6,79.69
+ORD-QAR-028,Doha Festival City,Groceries,7,250.62
+ORD-QAR-029,Doha Festival City,Fashion,4,220.51
+ORD-QAR-030,Doha Festival City,Groceries,1,139.86
+ORD-QAR-031,Doha Festival City,Beauty,3,100.84
+ORD-QAR-032,Doha Festival City,Electronics,5,159.79
+ORD-QAR-033,Mall of Qatar,Electronics,5,554.97
+ORD-QAR-034,Place Vendome,Groceries,8,113.7
+ORD-QAR-035,Mall of Qatar,Beauty,2,502.61
+ORD-QAR-036,Mall of Qatar,Electronics,7,369.53
+ORD-QAR-037,Villaggio,Beauty,7,441.2
+ORD-QAR-038,Mall of Qatar,Groceries,6,160.63
+ORD-QAR-039,Villaggio,Groceries,6,171.03
+ORD-QAR-040,Place Vendome,Groceries,5,293.91
+ORD-QAR-041,Place Vendome,Home,2,120.58
+ORD-QAR-042,Villaggio,Fashion,3,395.64
+ORD-QAR-043,Mall of Qatar,Groceries,4,159.03
+ORD-QAR-044,Mall of Qatar,Electronics,8,399.74
+ORD-QAR-045,Mall of Qatar,Fashion,5,89.69
+ORD-QAR-046,Place Vendome,Groceries,7,505.95
+ORD-QAR-047,Doha Festival City,Groceries,4,351.94
+ORD-QAR-048,Doha Festival City,Fashion,4,169.4
+ORD-QAR-049,Mall of Qatar,Electronics,5,192.75
+ORD-QAR-050,Doha Festival City,Home,7,268.64
+ORD-QAR-051,Villaggio,Groceries,3,293.14
+ORD-QAR-052,Villaggio,Groceries,6,440.45
+ORD-QAR-053,Doha Festival City,Home,9,249.71
+ORD-QAR-054,Doha Festival City,Groceries,3,692.47
+ORD-QAR-055,Place Vendome,Groceries,7,163.14
+ORD-QAR-056,Villaggio,Fashion,3,1190.53
+ORD-QAR-057,Place Vendome,Groceries,5,176.23
+ORD-QAR-058,Doha Festival City,Fashion,5,85.62
+ORD-QAR-059,Doha Festival City,Electronics,2,510.37
+ORD-QAR-060,Place Vendome,Beauty,11,504.37
+ORD-QAR-061,Doha Festival City,Fashion,5,480.35
+ORD-QAR-062,Villaggio,Groceries,4,572.6
+ORD-QAR-063,Doha Festival City,Electronics,9,140.84
+ORD-QAR-064,Villaggio,Home,9,176.92
+ORD-QAR-065,Doha Festival City,Groceries,5,339.52
+ORD-QAR-066,Place Vendome,Groceries,3,308.81
+ORD-QAR-067,Villaggio,Fashion,2,237.58
+ORD-QAR-068,Place Vendome,Fashion,2,583.59
+ORD-QAR-069,Mall of Qatar,Groceries,7,245.6
+ORD-QAR-070,Place Vendome,Groceries,8,178.82
+ORD-QAR-071,Villaggio,Groceries,5,185.87
+ORD-QAR-072,Villaggio,Groceries,6,216.48
+ORD-QAR-073,Place Vendome,Electronics,3,525.03
+ORD-QAR-074,Doha Festival City,Groceries,5,135.38
+ORD-QAR-075,Mall of Qatar,Electronics,2,1052.27
+ORD-QAR-076,Doha Festival City,Electronics,6,239.65
+ORD-QAR-077,Villaggio,Electronics,11,241.25
+ORD-QAR-078,Mall of Qatar,Groceries,4,2169.52
+ORD-QAR-079,Doha Festival City,Groceries,7,7850.0
+ORD-QAR-080,Mall of Qatar,Electronics,9,11400.0

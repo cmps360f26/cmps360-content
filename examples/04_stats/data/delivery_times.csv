@@ -1,0 +1,41 @@
+order_id,service_type,delivery_time_minutes,delivery_time_days,package_weight_kg,shipping_fee_qar,destination_zone
+DEL-001,Express Delivery,60.3,2,8.49,58.2,West Bay
+DEL-002,Express Delivery,52.4,2,6.21,47.94,Lusail
+DEL-003,Express Delivery,53.5,2,11.72,72.74,Al Rayyan
+DEL-004,Express Delivery,51.9,2,2.84,32.78,Lusail
+DEL-005,Express Delivery,52.5,2,3.94,37.73,Doha Center
+DEL-006,Express Delivery,48.8,2,3.12,34.04,West Bay
+DEL-007,Express Delivery,46.8,2,1.05,24.72,West Bay
+DEL-008,Express Delivery,52.3,2,10.9,69.05,West Bay
+DEL-009,Express Delivery,42.3,2,1.42,26.39,West Bay
+DEL-010,Express Delivery,52.8,3,7.48,53.66,Lusail
+DEL-011,Express Delivery,52.0,1,7.75,54.88,Doha Center
+DEL-012,Express Delivery,47.8,3,4.85,41.82,Lusail
+DEL-013,Express Delivery,50.7,3,0.65,22.92,Lusail
+DEL-014,Express Delivery,47.1,2,10.19,65.85,Doha Center
+DEL-015,Express Delivery,46.5,2,4.93,42.18,West Bay
+DEL-016,Express Delivery,53.6,2,6.84,50.78,Al Rayyan
+DEL-017,Express Delivery,50.7,3,8.67,59.02,Lusail
+DEL-018,Express Delivery,57.5,1,8.27,57.22,West Bay
+DEL-019,Express Delivery,59.9,3,8.49,58.2,Al Rayyan
+DEL-020,Express Delivery,52.6,3,4.44,39.98,Doha Center
+DEL-021,Standard Delivery,56.7,7,5.24,43.58,Al Rayyan
+DEL-022,Standard Delivery,87.3,3,3.26,34.67,West Bay
+DEL-023,Standard Delivery,15.0,3,11.64,72.38,West Bay
+DEL-024,Standard Delivery,24.5,4,3.82,37.19,Al Wakrah
+DEL-025,Standard Delivery,47.0,3,2.19,29.86,Doha Center
+DEL-026,Standard Delivery,58.6,3,1.99,28.96,Doha Center
+DEL-027,Standard Delivery,53.7,2,11.36,71.12,Doha Center
+DEL-028,Standard Delivery,54.1,4,4.54,40.43,Al Rayyan
+DEL-029,Standard Delivery,67.8,5,8.94,60.23,Doha Center
+DEL-030,Standard Delivery,51.6,4,11.01,69.54,Doha Center
+DEL-031,Standard Delivery,64.1,4,8.56,58.52,Al Rayyan
+DEL-032,Standard Delivery,57.3,3,4.97,42.36,Al Wakrah
+DEL-033,Standard Delivery,39.1,4,11.34,71.03,West Bay
+DEL-034,Standard Delivery,33.4,3,8.97,60.36,Al Wakrah
+DEL-035,Standard Delivery,29.2,4,3.24,34.58,Doha Center
+DEL-036,Standard Delivery,60.7,4,9.97,64.87,Al Wakrah
+DEL-037,Standard Delivery,47.4,4,9.25,61.62,Al Rayyan
+DEL-038,Standard Delivery,91.8,2,5.04,42.68,West Bay
+DEL-039,Standard Delivery,55.2,5,2.8,32.6,Al Wakrah
+DEL-040,Standard Delivery,93.9,4,8.69,59.1,Lusail

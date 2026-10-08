@@ -1,0 +1,21 @@
+property_id,zone,property_type,bedrooms,monthly_rent_qar
+P01,Al Sadd,Apartment,2,6500
+P02,Al Sadd,Apartment,2,7000
+P03,Al Sadd,Apartment,1,5500
+P04,Al Wakrah,Apartment,2,5000
+P05,Al Wakrah,Apartment,3,6200
+P06,Al Wakrah,Villa,4,8500
+P07,West Bay,Apartment,2,11000
+P08,West Bay,Apartment,3,13500
+P09,West Bay,Apartment,1,8500
+P10,Lusail,Apartment,2,9000
+P11,Lusail,Apartment,2,9500
+P12,Lusail,Apartment,3,12000
+P13,Lusail,Townhouse,3,14000
+P14,The Pearl,Apartment,1,9000
+P15,The Pearl,Apartment,2,12500
+P16,The Pearl,Apartment,2,13000
+P17,The Pearl,Apartment,3,16000
+P18,The Pearl,Apartment,3,17000
+P19,The Pearl,Penthouse,4,75000
+P20,West Bay,Penthouse,5,95000
