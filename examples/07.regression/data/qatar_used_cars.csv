@@ -1,0 +1,25 @@
+model,age_years,mileage_km,engine_size_l,price_qar
+Toyota Camry,1,18000,2.5,92000
+Toyota Camry,2,42000,2.5,81000
+Toyota Camry,3,35000,2.5,76000
+Toyota Camry,4,78000,2.5,63000
+Toyota Camry,6,110000,2.5,48000
+Toyota Camry,8,160000,2.5,34000
+Toyota Prado,1,20000,4.0,155000
+Toyota Prado,2,48000,4.0,142000
+Toyota Prado,3,38000,4.0,137000
+Toyota Prado,5,92000,4.0,112000
+Toyota Prado,7,135000,4.0,88000
+Toyota Prado,9,175000,4.0,68000
+Toyota Land Cruiser,1,22000,4.6,235000
+Toyota Land Cruiser,2,38000,4.6,218000
+Toyota Land Cruiser,4,65000,4.6,188000
+Toyota Land Cruiser,5,110000,4.6,162000
+Toyota Land Cruiser,7,145000,4.6,134000
+Toyota Land Cruiser,10,195000,4.6,102000
+Nissan Patrol,1,20000,5.6,228000
+Nissan Patrol,3,52000,5.6,185000
+Nissan Patrol,4,85000,5.6,158000
+Nissan Patrol,6,115000,5.6,132000
+Nissan Patrol,8,160000,5.6,105000
+Lexus LX,2,35000,5.7,285000
